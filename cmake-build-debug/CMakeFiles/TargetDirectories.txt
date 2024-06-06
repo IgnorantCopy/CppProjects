@@ -1,0 +1,4 @@
+D:/codes/CppProjects/cmake-build-debug/CMakeFiles/CppProjects.dir
+D:/codes/CppProjects/cmake-build-debug/CMakeFiles/edit_cache.dir
+D:/codes/CppProjects/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+D:/codes/CppProjects/cmake-build-debug/CMakeFiles/CppProjects_autogen.dir
