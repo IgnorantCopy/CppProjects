@@ -77,7 +77,39 @@
 	"CMAKE_SOURCE_DIR" : "D:/codes/CppProjects",
 	"DEP_FILE" : "",
 	"DEP_FILE_RULE_NAME" : "",
-	"HEADERS" : [],
+	"HEADERS" : 
+	[
+		[
+			"D:/codes/CppProjects/include/Game.h",
+			"MU",
+			"6YEA5652QU/moc_Game.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/Menu.h",
+			"MU",
+			"6YEA5652QU/moc_Menu.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/common.h",
+			"MU",
+			"6YEA5652QU/moc_common.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/ui_game.h",
+			"MU",
+			"6YEA5652QU/moc_ui_game.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/ui_menu.h",
+			"MU",
+			"6YEA5652QU/moc_ui_menu.cpp",
+			null
+		]
+	],
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
 	"INCLUDE_DIR" : "D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/include",
 	"MOC_COMPILATION_FILE" : "D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/mocs_compilation.cpp",
@@ -129,7 +161,10 @@
 	"SETTINGS_FILE" : "D:/codes/CppProjects/cmake-build-debug/CMakeFiles/CppProjects_autogen.dir/AutogenUsed.txt",
 	"SOURCES" : 
 	[
-		[ "D:/codes/CppProjects/main.cpp", "MU", null ]
+		[ "D:/codes/CppProjects/src/common.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/game.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/main.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/menu.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

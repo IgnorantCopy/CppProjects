@@ -14,7 +14,18 @@ find_package(Qt5 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(CppProjects main.cpp)
+add_executable(CppProjects src/main.cpp
+        src/menu.cpp
+        include/Menu.h
+        include/ui_menu.h
+        include/menu.ui
+        src/common.cpp
+        include/common.h
+        src/game.cpp
+        include/Game.h
+        include/game.ui
+        include/ui_game.h
+)
 target_link_libraries(CppProjects
         Qt5::Core
         Qt5::Gui

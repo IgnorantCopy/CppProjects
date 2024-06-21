@@ -1,0 +1,8 @@
+
+˜	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Îêïûÿÿÿÿ8ü÷Èíÿ1J$43515bdd-b4cb-4c0e-818d-c7f1781a459e
+|	cpp:S5025":Rewrite the code so that you no longer need this "delete".(Áğ¯8ş÷Èíÿ1J$3a377d00-0844-42ee-b8e5-f35ae1abff99
+	cpp:S1301 "KReplace this "switch" statement by "if" statements to increase readability.( ¢é„8ş÷Èíÿ1J$095b425a-60a4-4740-a0d7-aceb2d61e7c2
+p	cpp:S3562 ".Add a "default" case to this switch statement.( ¢é„8ÿ÷Èíÿ1J$08aa1376-d371-413d-afc0-f4b2d11050c2
+	cpp:S1301-"KReplace this "switch" statement by "if" statements to increase readability.( ¢é„8ÿ÷Èíÿ1J$9bac58db-708b-4178-a2a2-1720c9f89a5a
+p	cpp:S3562-".Add a "default" case to this switch statement.( ¢é„8ÿ÷Èíÿ1J$9de67c90-9427-4efb-89cf-f511270724a7
+°	cpp:S3230"iDo not use the constructor's initializer list for data member "ui". Use the in-class initializer instead.(Îêïûÿÿÿÿ8€øÈíÿ1J$1a51f200-3c8c-4cb4-92a7-28d38a1fc59a
