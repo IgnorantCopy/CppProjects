@@ -44,13 +44,13 @@ public:
     {
         if (Menu->objectName().isEmpty())
             Menu->setObjectName(QString::fromUtf8("Menu"));
-        Menu->resize(WIDTH, HEIGHT);
+        Menu->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
         Menu->setAcceptDrops(false);
         Menu->setLayoutDirection(Qt::LeftToRight);
         Menu->setStyleSheet(QString::fromUtf8(""));
         background = new QLabel(Menu);
         background->setObjectName(QString::fromUtf8("background"));
-        background->setGeometry(QRect(0, 0, WIDTH, HEIGHT));
+        background->setGeometry(QRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
         background->setStyleSheet(QString::fromUtf8("background-image: url(resources/images/mainBackground.jpg);"));
         background->setPixmap(QPixmap(QString::fromUtf8("resources/images/mainBackground.jpg")));
         background->setScaledContents(true);

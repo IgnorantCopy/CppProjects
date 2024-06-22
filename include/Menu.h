@@ -24,6 +24,7 @@ public:
 
 private:
     Ui::Menu *ui;
+    
 };
 
 

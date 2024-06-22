@@ -1,12 +1,27 @@
 
-	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(ö…»¿üÿÿÿÿ8¨«™îÿ1J$8dcb2ce5-5685-4b76-b0ab-e641beca29c8
-y	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(£ºû58©«™îÿ1J$0d33a515-9385-409a-b98f-22bed6c58a35
-“	cpp:S5025("QReplace the use of "new" with an operation that automatically manages the memory.(·š’´8íö˜îÿ1J$6e871255-11fc-4c0c-8d65-93d7eeef7669
-“	cpp:S5025*"QReplace the use of "new" with an operation that automatically manages the memory.(¶ˆÚÉ8îö˜îÿ1J$2eb14a60-e7b8-4723-9ee2-48f9df0d7371
-“	cpp:S5025,"QReplace the use of "new" with an operation that automatically manages the memory.(†“È½8îö˜îÿ1J$da752d12-263a-4fca-b02b-5fccd1a967c1
-˜	cpp:S50254"QReplace the use of "new" with an operation that automatically manages the memory.(’ó»Íùÿÿÿÿ8ïö˜îÿ1J$33c83cd4-f36b-4d99-9c78-da754d584200
-“	cpp:S5025>"QReplace the use of "new" with an operation that automatically manages the memory.(±ïŠ‹8ÇúÇîÿ1J$c419cba6-66e0-48ad-8119-8e83aa5304b9
-’	cpp:S5025C"QReplace the use of "new" with an operation that automatically manages the memory.(õñá_8ÈúÇîÿ1J$966c87b3-6fd1-467b-9166-ecdd993abc6c
-“	cpp:S5025H"QReplace the use of "new" with an operation that automatically manages the memory.(¼§¯Ğ8ÉúÇîÿ1J$9481b187-4844-476e-9480-5880d5e41761
-Y	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(ö…»¿üÿÿÿÿ8æàõÏƒ2
-S	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(£ºû58æàõÏƒ2
+	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(ö…»¿üÿÿÿÿ8¨«™îÿ1J$901cf7d3-671e-4a2d-933d-43a472e9feb4
+y	cpp:S5028"8Replace this macro by "const", "constexpr" or an "enum".(£ºû58©«™îÿ1J$71e2b784-57a1-4c8a-a2af-b4db20de69d7
+ 	cpp:S1820"^Refactor this structure so it has no more than 20 fields, rather than the 28 it currently has.(ıĞÚŒ8¢³Şöƒ2J$58bb440e-7861-415d-9262-5c8967b2107c
+	cpp:S59452"=Use "std::array" or "std::vector" instead of a C-style array.(Ôê’•8îÕŞöƒ2J$d843c3ed-92c4-4f64-8dec-6e515f7e5095
+©	cpp:S6012A"gAvoid explicitly specifying the template arguments by relying on the class template argument deduction.(¬–»ÿ8­³Şöƒ2J$d9e5a9b5-e3ae-4e1e-9fca-526d3c57a6b3
+“	cpp:S5025B"QReplace the use of "new" with an operation that automatically manages the memory.(·š’´8­³Şöƒ2J$a97f0d26-3eba-4e24-b59d-e431f53d06b5
+“	cpp:S5025D"QReplace the use of "new" with an operation that automatically manages the memory.(¶ˆÚÉ8­³Şöƒ2J$8a715778-3ab9-4b85-abd6-57977a4eff10
+“	cpp:S5025F"QReplace the use of "new" with an operation that automatically manages the memory.(†“È½8®³Şöƒ2J$74c86657-7828-4952-8659-4fd7b20ee934
+˜	cpp:S5025X"QReplace the use of "new" with an operation that automatically manages the memory.(’ó»Íùÿÿÿÿ8°³Şöƒ2J$689fcf98-834d-49de-b146-b256fbe48634
+“	cpp:S5025b"QReplace the use of "new" with an operation that automatically manages the memory.(±ïŠ‹8³³Şöƒ2J$5044c0c2-b487-4313-9ebc-6814e8902691
+’	cpp:S5025g"QReplace the use of "new" with an operation that automatically manages the memory.(õñá_8´³Şöƒ2J$76c6318b-06f6-42a5-afb6-8bffbedf81e7
+“	cpp:S5025l"QReplace the use of "new" with an operation that automatically manages the memory.(¼§¯Ğ8µ³Şöƒ2J$748765d6-985c-4bc9-946c-43da66b65144
+“	cpp:S5025w"QReplace the use of "new" with an operation that automatically manages the memory.(‘¶İÃ8·³Şöƒ2J$8c09bc92-133d-43cf-b794-8e267812e258
+˜	cpp:S5025~"QReplace the use of "new" with an operation that automatically manages the memory.(Ç´æƒùÿÿÿÿ8·³Şöƒ2J$65f93568-4a60-4ba7-a20c-850b91b3a926
+”	cpp:S5025„"QReplace the use of "new" with an operation that automatically manages the memory.(…†ÄÄ8¸³Şöƒ2J$b478a6a4-89f0-4ec4-81cd-65a83ec1816b
+”	cpp:S5025ˆ"QReplace the use of "new" with an operation that automatically manages the memory.(ïÁº—8¹³Şöƒ2J$7e0e7526-59f6-4e1c-ad62-ff4d9232639e
+”	cpp:S5025Œ"QReplace the use of "new" with an operation that automatically manages the memory.(áÙ²¼8º³Şöƒ2J$f3cb3641-c534-41c1-b983-3e8f53c8d3dd
+“	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(ËÊ–d8º³Şöƒ2J$fb612af3-b68a-43b3-836b-a340e12643a9
+™	cpp:S5025”"QReplace the use of "new" with an operation that automatically manages the memory.(ĞÆ¼Ùûÿÿÿÿ8»³Şöƒ2J$5ae4f14a-9184-47e5-8d70-e72be525e884
+”	cpp:S5025œ"QReplace the use of "new" with an operation that automatically manages the memory.(ËŠá´8¼³Şöƒ2J$35070cac-a1fb-4ea2-ab3e-0691d1f2e5f9
+“	cpp:S5025¡"QReplace the use of "new" with an operation that automatically manages the memory.(â¤Ú-8½³Şöƒ2J$16ffcf7a-9cbe-46d3-9cd2-2f8eccdfd67d
+”	cpp:S5025¦"QReplace the use of "new" with an operation that automatically manages the memory.(ƒüª£8¾³Şöƒ2J$6f7a6be0-ea2a-4e8b-ae03-7c50ef397c49
+”	cpp:S5025«"QReplace the use of "new" with an operation that automatically manages the memory.(Ç™Ø8¿³Şöƒ2J$8aa0e4c7-ed1c-4c8d-9f28-220739de8b72
+™	cpp:S5025°"QReplace the use of "new" with an operation that automatically manages the memory.(ª…ï‹úÿÿÿÿ8À³Şöƒ2J$538e866f-6f03-4951-8050-414c4621b47e
+™	cpp:S5025¶"QReplace the use of "new" with an operation that automatically manages the memory.(÷Ò´Øüÿÿÿÿ8Çæçöƒ2J$763427e4-9fed-4347-a706-ca4c6ad268b5
+ª	cpp:S6012Ş"gAvoid explicitly specifying the template arguments by relying on the class template argument deduction.(¬–»ÿ8Æ³Şöƒ2J$2433d726-7a9d-44de-bb0f-09de74c6a016

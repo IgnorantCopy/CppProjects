@@ -20,6 +20,7 @@ Menu::Menu(QWidget *parent) :
     QPushButton::connect(ui->startButton, &QPushButton::clicked, [this, game]() {
         this->close();
         game->show();
+        game->initGame();
     });
     QPushButton::connect(game, &Game::backToMenu, [this]() {
         this->show();

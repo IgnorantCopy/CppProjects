@@ -7,7 +7,7 @@
 
 #include <iostream>
 
-#define HEIGHT 1500
-#define WIDTH 2000
+#define WINDOW_HEIGHT 1500
+#define WINDOW_WIDTH 2000
 
 #endif //CPPPROJECTS_COMMON_H

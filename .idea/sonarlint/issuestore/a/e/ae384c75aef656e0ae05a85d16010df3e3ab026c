@@ -1,0 +1,4 @@
+
+q	cpp:S5414"*Don't mix public and private data members.(ë‚¤¤ûÿÿÿÿ8¸ß¡úƒ2J$f73363ac-386a-4bd0-9c0e-d46b2f25c45a
+m	cpp:S3656-"+Member variables should not be "protected".(Ó³¼ï8Úö úƒ2J$c461e6e7-17a0-4b59-afb0-97d04b675757
+ˆ	cpp:S6009F"FReplace this const reference to "std::string" by a "std::string_view".(Š§·”8†¦Ñúƒ2J$0e6b8764-2389-4644-b403-8d1226abf03f

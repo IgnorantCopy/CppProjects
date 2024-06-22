@@ -27,3 +27,5 @@ A
 include/ui_game.h,a\5\a5443c18c97f5854375080e144436d2d7d19deb7
 >
 include/Game.h,a\e\ae384c75aef656e0ae05a85d16010df3e3ab026c
+B
+resources/game.qrc,3\d\3d0463e8f18dda4d0cb3a96bd0701d75f63c70e7
