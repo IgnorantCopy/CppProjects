@@ -21,10 +21,14 @@ add_executable(CppProjects src/main.cpp
         include/menu.ui
         src/common.cpp
         include/common.h
-        src/game.cpp
-        include/Game.h
-        include/game.ui
-        include/ui_game.h
+        src/game/game.cpp
+        include/game/Game.h
+        include/game/game.ui
+        include/game/ui_game.h
+        src/game/device.cpp
+        include/game/device.h
+        src/game/mine.cpp
+        include/game/mine.h
 )
 target_link_libraries(CppProjects
         Qt5::Core

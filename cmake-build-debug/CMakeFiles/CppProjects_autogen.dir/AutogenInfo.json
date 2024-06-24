@@ -80,12 +80,6 @@
 	"HEADERS" : 
 	[
 		[
-			"D:/codes/CppProjects/include/Game.h",
-			"MU",
-			"6YEA5652QU/moc_Game.cpp",
-			null
-		],
-		[
 			"D:/codes/CppProjects/include/Menu.h",
 			"MU",
 			"6YEA5652QU/moc_Menu.cpp",
@@ -98,9 +92,27 @@
 			null
 		],
 		[
-			"D:/codes/CppProjects/include/ui_game.h",
+			"D:/codes/CppProjects/include/game/Game.h",
 			"MU",
-			"6YEA5652QU/moc_ui_game.cpp",
+			"6SJZKF3T4A/moc_Game.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/game/device.h",
+			"MU",
+			"6SJZKF3T4A/moc_device.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/game/mine.h",
+			"MU",
+			"6SJZKF3T4A/moc_mine.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/game/ui_game.h",
+			"MU",
+			"6SJZKF3T4A/moc_ui_game.cpp",
 			null
 		],
 		[
@@ -162,7 +174,9 @@
 	"SOURCES" : 
 	[
 		[ "D:/codes/CppProjects/src/common.cpp", "MU", null ],
-		[ "D:/codes/CppProjects/src/game.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/game/device.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/game/game.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/game/mine.cpp", "MU", null ],
 		[ "D:/codes/CppProjects/src/main.cpp", "MU", null ],
 		[ "D:/codes/CppProjects/src/menu.cpp", "MU", null ]
 	],

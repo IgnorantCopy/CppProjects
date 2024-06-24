@@ -81,13 +81,29 @@ build CMakeFiles/CppProjects.dir/src/common.cpp.obj: CXX_COMPILER__CppProjects_u
   OBJECT_DIR = CMakeFiles\CppProjects.dir
   OBJECT_FILE_DIR = CMakeFiles\CppProjects.dir\src
 
-build CMakeFiles/CppProjects.dir/src/game.cpp.obj: CXX_COMPILER__CppProjects_unscanned_Debug D$:/codes/CppProjects/src/game.cpp || cmake_object_order_depends_target_CppProjects
+build CMakeFiles/CppProjects.dir/src/game/game.cpp.obj: CXX_COMPILER__CppProjects_unscanned_Debug D$:/codes/CppProjects/src/game/game.cpp || cmake_object_order_depends_target_CppProjects
   DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
-  DEP_FILE = CMakeFiles\CppProjects.dir\src\game.cpp.obj.d
+  DEP_FILE = CMakeFiles\CppProjects.dir\src\game\game.cpp.obj.d
   FLAGS = -g -fdiagnostics-color=always
   INCLUDES = -isystem D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/./mkspecs/win32-g++ -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtGui -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtANGLE -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets
   OBJECT_DIR = CMakeFiles\CppProjects.dir
-  OBJECT_FILE_DIR = CMakeFiles\CppProjects.dir\src
+  OBJECT_FILE_DIR = CMakeFiles\CppProjects.dir\src\game
+
+build CMakeFiles/CppProjects.dir/src/game/device.cpp.obj: CXX_COMPILER__CppProjects_unscanned_Debug D$:/codes/CppProjects/src/game/device.cpp || cmake_object_order_depends_target_CppProjects
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles\CppProjects.dir\src\game\device.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/./mkspecs/win32-g++ -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtGui -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtANGLE -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets
+  OBJECT_DIR = CMakeFiles\CppProjects.dir
+  OBJECT_FILE_DIR = CMakeFiles\CppProjects.dir\src\game
+
+build CMakeFiles/CppProjects.dir/src/game/mine.cpp.obj: CXX_COMPILER__CppProjects_unscanned_Debug D$:/codes/CppProjects/src/game/mine.cpp || cmake_object_order_depends_target_CppProjects
+  DEFINES = -DQT_CORE_LIB -DQT_GUI_LIB -DQT_WIDGETS_LIB
+  DEP_FILE = CMakeFiles\CppProjects.dir\src\game\mine.cpp.obj.d
+  FLAGS = -g -fdiagnostics-color=always
+  INCLUDES = -isystem D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtCore -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/./mkspecs/win32-g++ -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtGui -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtANGLE -isystem D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets
+  OBJECT_DIR = CMakeFiles\CppProjects.dir
+  OBJECT_FILE_DIR = CMakeFiles\CppProjects.dir\src\game
 
 
 # =============================================================================
@@ -97,7 +113,7 @@ build CMakeFiles/CppProjects.dir/src/game.cpp.obj: CXX_COMPILER__CppProjects_uns
 #############################################
 # Link the executable CppProjects.exe
 
-build CppProjects.exe: CXX_EXECUTABLE_LINKER__CppProjects_Debug CMakeFiles/CppProjects.dir/CppProjects_autogen/mocs_compilation.cpp.obj CMakeFiles/CppProjects.dir/src/main.cpp.obj CMakeFiles/CppProjects.dir/src/menu.cpp.obj CMakeFiles/CppProjects.dir/src/common.cpp.obj CMakeFiles/CppProjects.dir/src/game.cpp.obj | D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Widgets.a D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Gui.a D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Core.a || CppProjects_autogen
+build CppProjects.exe: CXX_EXECUTABLE_LINKER__CppProjects_Debug CMakeFiles/CppProjects.dir/CppProjects_autogen/mocs_compilation.cpp.obj CMakeFiles/CppProjects.dir/src/main.cpp.obj CMakeFiles/CppProjects.dir/src/menu.cpp.obj CMakeFiles/CppProjects.dir/src/common.cpp.obj CMakeFiles/CppProjects.dir/src/game/game.cpp.obj CMakeFiles/CppProjects.dir/src/game/device.cpp.obj CMakeFiles/CppProjects.dir/src/game/mine.cpp.obj | D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Widgets.a D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Gui.a D$:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Core.a || CppProjects_autogen
   FLAGS = -g
   LINK_LIBRARIES = D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Widgets.a  D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Gui.a  D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/libQt5Core.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\CppProjects.dir
@@ -134,13 +150,13 @@ build rebuild_cache: phony CMakeFiles/rebuild_cache.util
 #############################################
 # Utility command for CppProjects_autogen
 
-build CppProjects_autogen: phony CMakeFiles/CppProjects_autogen CppProjects_autogen/mocs_compilation.cpp CppProjects_autogen/include/include/ui_menu.h CppProjects_autogen/include/include/ui_game.h
+build CppProjects_autogen: phony CMakeFiles/CppProjects_autogen CppProjects_autogen/mocs_compilation.cpp CppProjects_autogen/include/include/ui_menu.h CppProjects_autogen/include/include/game/ui_game.h
 
 
 #############################################
 # Custom command for CMakeFiles\CppProjects_autogen
 
-build CMakeFiles/CppProjects_autogen CppProjects_autogen/mocs_compilation.cpp CppProjects_autogen/include/include/ui_menu.h CppProjects_autogen/include/include/ui_game.h | ${cmake_ninja_workdir}CMakeFiles/CppProjects_autogen ${cmake_ninja_workdir}CppProjects_autogen/mocs_compilation.cpp ${cmake_ninja_workdir}CppProjects_autogen/include/include/ui_menu.h ${cmake_ninja_workdir}CppProjects_autogen/include/include/ui_game.h: CUSTOM_COMMAND
+build CMakeFiles/CppProjects_autogen CppProjects_autogen/mocs_compilation.cpp CppProjects_autogen/include/include/ui_menu.h CppProjects_autogen/include/include/game/ui_game.h | ${cmake_ninja_workdir}CMakeFiles/CppProjects_autogen ${cmake_ninja_workdir}CppProjects_autogen/mocs_compilation.cpp ${cmake_ninja_workdir}CppProjects_autogen/include/include/ui_menu.h ${cmake_ninja_workdir}CppProjects_autogen/include/include/game/ui_game.h: CUSTOM_COMMAND
   COMMAND = C:\Windows\system32\cmd.exe /C "cd /D D:\codes\CppProjects\cmake-build-debug && "D:\Program Files\apps\CLion\ch-0\241.14494.288\bin\cmake\win\x64\bin\cmake.exe" -E cmake_autogen D:/codes/CppProjects/cmake-build-debug/CMakeFiles/CppProjects_autogen.dir/AutogenInfo.json Debug"
   DESC = Automatic MOC and UIC for target CppProjects
   restat = 1

@@ -1,0 +1,31 @@
+
+˜	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Îêïûÿÿÿÿ8ü÷Èíÿ1J$544d81f0-9e1e-4748-beaf-8e634d2cb337
+˜	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(€–§ÿÿÿÿÿÿ8ºæí©„2J$357fd08c-ab77-42e1-9f6c-707ed9a0da47
+|	cpp:S5025":Rewrite the code so that you no longer need this "delete".(Áğ¯8íÔó¨„2J$791ac9d8-e7cc-4447-8aa4-9a3fef3c6019
+|	cpp:S5025":Rewrite the code so that you no longer need this "delete".(ØÉ¶Ó8íÔó¨„2J$50cd6893-df0f-4994-bf98-e370dd7be4a4
+—	cpp:S3776Ù"TRefactor this function to reduce its Cognitive Complexity from 47 to the 25 allowed.(Šü„Õ8›–°Ã„2J$56fdb459-1aa5-4f35-9ea3-93532312e6ab
+”cpp:S134ç"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(Æ›«Åúÿÿÿÿ8›–°Ã„2J$3a7be653-8770-4167-9f2d-08c9c70f846b
+cpp:S134ì"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(ó¦µÜ8›–°Ã„2J$6735936d-a865-47be-88f5-156a0974ffc4
+cpp:S134û"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(·¯á8œ–°Ã„2J$f976db94-32b8-4315-826c-1513ab8c8276
+y	cpp:S1066¥"1Merge this "if" statement with the enclosing one.(øÄÏ´øÿÿÿÿ8àÅÅÎ„2J$1749d1bd-1ed0-4d94-b7d8-a026090673d0
+œ	cpp:S3776°"TRefactor this function to reduce its Cognitive Complexity from 28 to the 25 allowed.(÷ˆşĞùÿÿÿÿ8âÅÅÎ„2J$9fed2d07-67be-4c1f-8add-958ef7b880d5
+”cpp:S134Á"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(Æ›«Åúÿÿÿÿ8âÅÅÎ„2J$a80a509e-f7bc-4dce-bf10-e52f59dc92b3
+cpp:S134Æ"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(ó¦µÜ8âÅÅÎ„2J$a440641f-59dc-42b4-a8d4-b4eccaf2ada7
+cpp:S134Ï"MRefactor this code to not nest more than 3 if|for|do|while|switch statements.(òÅ‚ 8âÅÅÎ„2J$698d8fec-9242-47cc-a031-84781c29e5f3
+™	cpp:S5025é"QReplace the use of "new" with an operation that automatically manages the memory.(Ù¾êˆùÿÿÿÿ8ƒÆÅÎ„2J$a0e6106b-1805-4375-bcd0-1d5772cb49c8
+”	cpp:S5025ï"QReplace the use of "new" with an operation that automatically manages the memory.(ÍÎ§8…ÆÅÎ„2J$fa8d17a5-ce53-44d9-a267-7f5aaecb62be
+”	cpp:S5025õ"QReplace the use of "new" with an operation that automatically manages the memory.(±ï‹ï8†ÆÅÎ„2J$76925a2a-9eb6-4183-afa3-36287160e85d
+”	cpp:S5025ü"QReplace the use of "new" with an operation that automatically manages the memory.(©ïÇÎ8‡ÆÅÎ„2J$8d6d34d8-c529-4965-8eb4-3a0b2606b224
+”	cpp:S5025ƒ"QReplace the use of "new" with an operation that automatically manages the memory.(ª¬¦8ˆÆÅÎ„2J$a25aa9f3-668e-48f8-ac0f-57d916679eb5
+™	cpp:S5025Š"QReplace the use of "new" with an operation that automatically manages the memory.(ú¿¢™üÿÿÿÿ8‰ÆÅÎ„2J$0b4cc825-e7aa-43c0-9e1c-3d9ab5f57568
+™	cpp:S5025‘"QReplace the use of "new" with an operation that automatically manages the memory.(·Ó½îüÿÿÿÿ8‹ÆÅÎ„2J$e4131fbf-cb39-4cc0-afc0-addd33072c9a
+™	cpp:S5025˜"QReplace the use of "new" with an operation that automatically manages the memory.(˜×ï°ùÿÿÿÿ8ŒÆÅÎ„2J$54f78483-8faf-47d3-ae03-4c544c8fb8e8
+™	cpp:S5025Ÿ"QReplace the use of "new" with an operation that automatically manages the memory.(üô™Ãøÿÿÿÿ8ÆÅÎ„2J$056701e6-dabe-4671-8753-74454fed6e50
+™	cpp:S5025¦"QReplace the use of "new" with an operation that automatically manages the memory.(çíÆ»úÿÿÿÿ8ÆÅÎ„2J$2c0620ea-e645-4ccf-9dc3-6d9763a9a497
+™	cpp:S5025­"QReplace the use of "new" with an operation that automatically manages the memory.(ˆ®¼ÿÿÿÿÿ8‘ÆÅÎ„2J$3787086a-08fb-44ae-863c-966dbf4949d5
+”	cpp:S5025´"QReplace the use of "new" with an operation that automatically manages the memory.(Áğ±©8‘ÆÅÎ„2J$d30ac7d6-0289-4266-9fa7-b23d56e27743
+”	cpp:S5025»"QReplace the use of "new" with an operation that automatically manages the memory.(±ŠÍÜ8’ÆÅÎ„2J$4b47d508-a9c2-4df0-a994-41719e5c60b4
+™	cpp:S5025Â"QReplace the use of "new" with an operation that automatically manages the memory.(·ÕÚˆûÿÿÿÿ8“ÆÅÎ„2J$39eeefd6-9fae-4d9e-82e6-63cfaa876e50
+”	cpp:S5025¬"QReplace the use of "new" with an operation that automatically manages the memory.(³ãœŒ8­ÆÅÎ„2J$88eac0b9-aad4-4410-a31a-865ca1f71c86
+—	cpp:S3776»"TRefactor this function to reduce its Cognitive Complexity from 35 to the 25 allowed.(ßÿÔ”8³ÆÅÎ„2J$a34c191f-25a1-4f11-bb51-3d09ddcb0084
+°	cpp:S3230"iDo not use the constructor's initializer list for data member "ui". Use the in-class initializer instead.(Îêïûÿÿÿÿ8¬®ª„2J$7830aa6e-af41-4359-b98a-659f097ab716

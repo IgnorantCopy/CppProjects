@@ -1,0 +1,12 @@
+
+m	cpp:S3656"+Member variables should not be "protected".(˜þÒû8„¹µ¿„2J$c90abe9f-b785-45ee-8fe1-8df40b50dcbb
+™	cpp:S4963"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(˜þÒû8…¹µ¿„2J$c5dc4694-554a-43c8-9cef-26c3f2e557dc
+ˆ	cpp:S60094"FReplace this const reference to "std::string" by a "std::string_view".(Š§·”8‰¹µ¿„2J$4a8a3cf9-9420-40b0-8042-8970b991e47c
+™	cpp:S4963P"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(™Ïëç8‹¹µ¿„2J$37958013-7479-4cf5-b15b-3d2178b4d375
+ž	cpp:S4963i"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(¨Ûžçýÿÿÿÿ8Œ¹µ¿„2J$14afc3f1-6a9e-4e23-8866-44ef5e0cf4d7
+¤cpp:S110i"^The inheritance hierarchy for this class has a depth of 6, which is greater than 5 authorized.(¨Ûžçýÿÿÿÿ8Œ¹µ¿„2J$3598f9bd-8c9c-4265-901d-979892e5ec36
+Ÿ	cpp:S4963¡"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(›µ¸—úÿÿÿÿ8’¹µ¿„2J$6d313cbc-4cc7-4bf6-9fd1-6d771309c6f0
+š	cpp:S4963º"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(‘ä“±8”¹µ¿„2J$782d34ee-577f-4c7e-809b-d99a099adc3f
+ cpp:S110º"^The inheritance hierarchy for this class has a depth of 6, which is greater than 5 authorized.(‘ä“±8”¹µ¿„2J$9ca56caa-e4e5-425d-96f7-268b65e5cd48
+Ÿ	cpp:S4963Ò"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(éÕÝ¢ûÿÿÿÿ8–¹µ¿„2J$5c3c81d3-a8b1-460b-bd81-8b2ce6b61215
+¥cpp:S110Ò"^The inheritance hierarchy for this class has a depth of 6, which is greater than 5 authorized.(éÕÝ¢ûÿÿÿÿ8–¹µ¿„2J$2f4ac1a7-41eb-46c7-8483-3f763e8c3bf9

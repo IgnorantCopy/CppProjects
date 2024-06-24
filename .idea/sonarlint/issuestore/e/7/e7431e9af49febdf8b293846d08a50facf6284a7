@@ -1,0 +1,4 @@
+
+m	cpp:S3656"+Member variables should not be "protected".(Ш■╥√8маю┐Д2J$7192961e-a1bd-4041-b5b4-3d759a88acc7
+а	cpp:S3624"^Explicitly define or delete the missing destructor so that it will not be implicitly provided.(Ш■╥√8Їьв└Д2J$87a327d1-3eec-471f-8ff8-dbedd8d6384f
+Щ	cpp:S4963"WRemove this class' copy assignment operator so that the class follows the rule of Zero.(Ш■╥√8наю┐Д2J$f3c2d4d3-0589-495c-a880-4b76c420edf4

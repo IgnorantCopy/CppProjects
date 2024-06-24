@@ -6,8 +6,6 @@
 
 #include "../include/Menu.h"
 #include "../include/ui_menu.h"
-#include "../include/Game.h"
-
 
 
 Menu::Menu(QWidget *parent) :
@@ -16,11 +14,11 @@ Menu::Menu(QWidget *parent) :
     ui->startButton->setAttribute(Qt::WA_Hover, true);
     ui->startButton->installEventFilter(this);
     
-    auto *game = new Game();
-    QPushButton::connect(ui->startButton, &QPushButton::clicked, [this, game]() {
+    Menu::game = new Game();
+    QPushButton::connect(ui->startButton, &QPushButton::clicked, [this]() {
         this->close();
-        game->show();
-        game->initGame();
+        Menu::game->show();
+        Menu::game->initGame();
     });
     QPushButton::connect(game, &Game::backToMenu, [this]() {
         this->show();
@@ -29,6 +27,7 @@ Menu::Menu(QWidget *parent) :
 
 Menu::~Menu() {
     delete ui;
+    delete game;
 }
 
 bool Menu::eventFilter(QObject *object, QEvent *event) {

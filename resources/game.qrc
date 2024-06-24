@@ -1,14 +1,11 @@
 <RCC>
   <qresource prefix="resources">
     <file>images/destroyerSelect.png</file>
-    <file>images/cutterSelect.png</file>
     <file>images/centerSelect.png</file>
-    <file>images/conveyor/conveyorUp.png</file>
-    <file>images/miner.png</file>
     <file>images/center.png</file>
     <file>images/destroyer.png</file>
-    <file>images/cutter.png</file>
     <file>images/frameBase.png</file>
+    <file>images/moneyFrame.png</file>
     <file>images/frameButton.png</file>
     <file>images/gameBack.png</file>
     <file>images/replay.png</file>

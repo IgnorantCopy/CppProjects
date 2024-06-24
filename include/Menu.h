@@ -6,6 +6,7 @@
 #define CPPPROJECTS_MENU_H
 
 #include <QWidget>
+#include "../include/game/Game.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -21,10 +22,12 @@ public:
     ~Menu() override;
     
     bool eventFilter(QObject *object, QEvent *event) override;
-
+    
+    static Game* getGame() { return game; }
+    
 private:
     Ui::Menu *ui;
-    
+    static Game *game;
 };
 
 
