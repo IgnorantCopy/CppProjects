@@ -1,2 +1,3 @@
 
-q	cpp:S5414"*Don't mix public and private data members.(ë‚¤¤ûÿÿÿÿ8ş•©Ã„2J$aca327ca-eef6-48f0-a17d-63f5dd1f462e
+q	cpp:S5414"*Don't mix public and private data members.(ë‚¤¤ûÿÿÿÿ8ÒëÑÖ…2J$be1643a7-de30-4b29-8d12-57e3432f6f98
+¤	cpp:S1448"]Class has 39 methods, which is greater than the 35 authorized. Split it into smaller classes.(ë‚¤¤ûÿÿÿÿ8ß¯Ñ…2J$7f28c369-e27a-404f-ade1-482854fe7a3a

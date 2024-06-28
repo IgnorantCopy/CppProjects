@@ -4,20 +4,6 @@
 
 #include "../../include/game/device.h"
 
-Device& Device::operator=(const Device &other) {
-    if (this == &other) {
-        return *this;
-    }
-    this->groundWidth = other.groundWidth;
-    this->groundHeight = other.groundHeight;
-    this->direction = other.direction;
-    this->speed = other.speed;
-    this->isRotatable = other.isRotatable;
-    this->name = other.name;
-    this->setGeometry(QRect(other.x(), other.y(), other.groundWidth * GROUND_WIDTH, other.groundHeight * GROUND_WIDTH));
-    return *this;
-}
-
 void Device::setName(DeviceName name_) {
     name = name_;
     switch (name_) {
@@ -32,7 +18,9 @@ void Device::setName(DeviceName name_) {
             groundWidth = 2;
             groundHeight = 1;
             isRotatable = true;
+            isBlocked = false;
             speed = 1000;
+            direction = 0;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/cutter/cutter.png);"));
             break;
@@ -40,6 +28,7 @@ void Device::setName(DeviceName name_) {
             groundWidth = 1;
             groundHeight = 1;
             isRotatable = false;
+            isBlocked = false;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/destroyer.png);"));
             break;
@@ -48,6 +37,7 @@ void Device::setName(DeviceName name_) {
             groundHeight = 1;
             isRotatable = true;
             speed = 1000;
+            direction = 0;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/miner/miner.png);"));
             timerId = startTimer(speed);
@@ -56,7 +46,9 @@ void Device::setName(DeviceName name_) {
             groundWidth = 1;
             groundHeight = 1;
             isRotatable = true;
-            speed = 1000;
+            isBlocked = false;
+            speed = 600;
+            direction = 0;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/conveyor/conveyor.png);"));
             break;
@@ -64,17 +56,30 @@ void Device::setName(DeviceName name_) {
             groundWidth = 1;
             groundHeight = 1;
             isRotatable = true;
-            speed = 1000;
+            isBlocked = false;
+            speed = 600;
+            direction = 0;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/conveyor/conveyor10.png);"));
+            break;
         case DeviceName::CONVEYOR_CHANGE2:
             groundWidth = 1;
             groundHeight = 1;
             isRotatable = true;
-            speed = 1000;
+            isBlocked = false;
+            speed = 600;
+            direction = 0;
             setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/conveyor/conveyor20.png);"));
+            break;
         default:
+            groundWidth = 1;
+            groundHeight = 1;
+            isRotatable = false;
+            isBlocked = true;
+            speed = 0;
+            direction = 0;
+            setGeometry(QRect(x(), y(), groundWidth * GROUND_WIDTH, groundHeight * GROUND_WIDTH));
             break;
     }
 }
@@ -154,7 +159,8 @@ void Device::rotateRight() {
 
 void Device::timerEvent(QTimerEvent *event) {
     if (event->timerId() == timerId) {
-    
+        if (name == DeviceName::MINER) {
+            emit mineCreate();
+        }
     }
-    
 }

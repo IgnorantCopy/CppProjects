@@ -1,5 +1,18 @@
 <RCC>
   <qresource prefix="resources">
+    <file>images/upgradeBackground.png</file>
+    <file>images/level/level1-3.png</file>
+    <file>images/level/level1-2.png</file>
+    <file>images/level/level1-1.png</file>
+    <file>images/mine/singleEmerald.png</file>
+    <file>images/taskFrameButton.png</file>
+    <file>images/taskFrameBase.png</file>
+    <file>images/conveyor/conveyor20.png</file>
+    <file>images/conveyor/conveyor10.png</file>
+    <file>images/conveyor/conveyor.png</file>
+    <file>images/cutter/cutter.png</file>
+    <file>images/mine/pilesOfEmerald.png</file>
+    <file>images/miner/miner.png</file>
     <file>images/destroyerSelect.png</file>
     <file>images/centerSelect.png</file>
     <file>images/center.png</file>

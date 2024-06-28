@@ -23,11 +23,9 @@ public:
     
     bool eventFilter(QObject *object, QEvent *event) override;
     
-    static Game* getGame() { return game; }
-    
 private:
     Ui::Menu *ui;
-    static Game *game;
+    Game *game;
 };
 
 

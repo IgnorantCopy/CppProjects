@@ -6,25 +6,25 @@
 #define CPPPROJECTS_MINE_H
 
 #include <QLabel>
+#include <QPropertyAnimation>
 #include "../common.h"
-#include "../Menu.h"
 #include "device.h"
 
 enum class MineName {
     COMMON,
     DIAMOND,
     EMERALD,
+    SINGLE_DIAMOND,
+    SINGLE_EMERALD,
 };
 
 class Mine: public QLabel {
 Q_OBJECT
-protected:
     bool isPiled = true;
     MineName mineName = MineName::COMMON;
     int value = 0;
     int groundX = 0;
     int groundY = 0;
-    static Game *game;
 public:
     Mine() = default;
     
@@ -37,16 +37,14 @@ public:
     int getGroundY() const { return groundY; }
     
     void setIsPiled(bool piled) { this->isPiled = piled; }
-    void setMineName(MineName name) { this->mineName = name; }
+    void setMineName(MineName name);
     void setValue(int v) { this->value = v; }
     void setGroundX(int x) { this->groundX = x; }
     void setGroundY(int y) { this->groundY = y; }
     
-    void motion() {
-    }
+    void enterMotion(int direction);
+    void leaveMotion(int direction);
     
 };
-
-Game *Mine::game = Menu::getGame();
 
 #endif //CPPPROJECTS_MINE_H

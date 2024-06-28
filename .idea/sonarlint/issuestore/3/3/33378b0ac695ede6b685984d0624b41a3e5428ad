@@ -1,5 +1,7 @@
 
-“	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Σευ’8ΰθ…ÿ1J$e6bcc3b2-855f-4e0a-8c70-1f3a24821dd7
-|	cpp:S5025":Rewrite the code so that you no longer need this "delete".(Απ―8½ϋΌΣ„2J$d95bce0e-5434-4c4a-b233-331ccb97edaf
-	cpp:S5025":Rewrite the code so that you no longer need this "delete".(ξ‰ακÿÿÿÿÿ8–ώΑΣ„2J$b5ef698e-8177-4939-95a5-a2fc33aa0306
-«	cpp:S3230"iDo not use the constructor's initializer list for data member "ui". Use the in-class initializer instead.(Σευ’8ΰθ…ÿ1J$28b96d6b-bf50-49d9-9211-1d7c6ffc3b97
+	cpp:S3230"`Do not assign data members in a constructor. Initialize member "game" in an initialization list.(νª ϊύÿÿÿÿ8χΈ…2
+“	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Σευ’8ΰθ…ÿ1J$1eff6588-3181-41f5-a6c7-48b7e01aba19
+	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(νª ϊύÿÿÿÿ8†ήλ„2J$004677d7-cea0-428e-9a5e-6035790fede0
+|	cpp:S5025":Rewrite the code so that you no longer need this "delete".(Απ―8½ϋΌΣ„2J$afa3f4d1-8140-4b95-9cc1-06cea3492612
+	cpp:S5025":Rewrite the code so that you no longer need this "delete".(ξ‰ακÿÿÿÿÿ8–ώΑΣ„2J$507afe99-c175-4034-a657-745a430c36c9
+«	cpp:S3230"iDo not use the constructor's initializer list for data member "ui". Use the in-class initializer instead.(Σευ’8ΰθ…ÿ1J$2e5f529a-cf27-4bf5-b064-accc6da8f673

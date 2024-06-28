@@ -1,7 +1,0 @@
-
-Á	cpp:S3230	"Remove this use of the constructor's initializer list for data member "m_movie". It is redundant with the in-class initializer.(¼¦æë8˜ôÓ…„2J$49158eb1-a5d4-46e5-a172-07cb7cb6890b
-“	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Ð‚Ø‚8Æ×Õ…„2J$4874229b-7b10-4599-9c07-18b913e006b7
-¤cpp:S995"cMake the type of this parameter a pointer-to-const. The current type of "obj" is "class QObject *".(÷…‚µ8Ìºâ…„2J$556f58a7-9253-4739-bb56-953a5377ec7a
-­	cpp:S1116 "kModify the macro definition so that it needs to be followed by a semicolon, or remove this empty statement.(¨©¥ÿ8ê™â…„2J$ad5f66de-e63e-4a86-a861-b27ce648204a
-¤	cpp:S1172C"]Remove the unused parameter "frameNumber", make it unnamed, or declare it "[[maybe_unused]]".(Ý¤–›ýÿÿÿÿ8ì·õ…„2J$7550f3f2-997a-4dcb-8333-7d206fb2bb61
-n	cpp:S5827I"'Replace the redundant type with "auto".(¿†ŸÚüÿÿÿÿ8ÌÑñ…„2J$cf167b57-79b6-4521-a644-d3f81f5c09ce
