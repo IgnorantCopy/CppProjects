@@ -38,6 +38,7 @@ public:
     QSpacerItem *horizontalSpacer_2;
     QPushButton *startButton;
     QSpacerItem *horizontalSpacer_4;
+    QPushButton *shopButton;
 
     void setupUi(QWidget *Menu)
     {
@@ -144,6 +145,10 @@ public:
 
         verticalLayout_3->addLayout(verticalLayout_2);
 
+        shopButton = new QPushButton(Menu);
+        shopButton->setObjectName(QString::fromUtf8("shopButton"));
+        shopButton->setGeometry(QRect(1640, 1190, 261, 271));
+        shopButton->setStyleSheet(QString::fromUtf8("border-image: url(:/resources/images/Shop.png);"));
 
         retranslateUi(Menu);
 
@@ -159,6 +164,7 @@ public:
         background->setText(QString());
         title->setText(QCoreApplication::translate("Menu", "Special Shpaed Plant", nullptr));
         startButton->setText(QString());
+        shopButton->setText(QString());
     } // retranslateUi
 
 };

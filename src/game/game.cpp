@@ -4,6 +4,8 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_game.h" resolved
 
+#include <QtMultimedia/QMediaPlayer>
+#include <iostream>
 #include "../../include/game/Game.h"
 #include "../../include/game/ui_game.h"
 
@@ -59,31 +61,65 @@ void Game::initAttributes() {
 void Game::connection() {
     QPushButton::connect(ui->menuBackButton, &QPushButton::clicked, [this]() {
         this->close();
-        exitGame();
         emit backToMenu();
     });
     QPushButton::connect(ui->gameBackButton, &QPushButton::clicked, [this]() {
         ui->setPauseMenu(false);
     });
     QPushButton::connect(ui->replayButton, &QPushButton::clicked, [this]() {
-        exitGame();
-        initGame();
+        restartGame();
     });
     QPushButton::connect(ui->deviceFrameButton, &QPushButton::clicked, this, &Game::moveDeviceFrame);
     QPushButton::connect(ui->taskFrameButton, &QPushButton::clicked, this, &Game::moveTaskFrame);
-    QPushButton::connect(ui->taskFinishButton, &QPushButton::clicked, this, &Game::displayUpgradeFrame);
+    QPushButton::connect(ui->taskFinishButton, &QPushButton::clicked, [this]() {
+        displayUpgradeFrame();
+        QSound::play("resources/audio/applause.WAV");
+    });
     QPushButton::connect(ui->chooseUpgradeButton1, &QPushButton::clicked, [this]() {
         hideUpgradeFrame();
-        ui->cutterLevelLabel->setStyleSheet("border-image: url(resources/images/level/level2-1.png);");
+        int level = Data::getCutterLevel();
+        if (level <= 3) {
+            Data::setCutterLevel(level + 1);
+            ui->cutterLevelLabel->setStyleSheet("border-image: url(resources/images/level/level" + QString::number(level + 1) + "-1.png);");
+            for (int i = 0; i < ROW; i++) {
+                for (int j = 0; j < COL; j++) {
+                    if (ui->devices[i][j]->getName() == DeviceName::CUTTER) {
+                        ui->devices[i][j]->setSpeed(2500 - 500 * Data::getCutterLevel());
+                    }
+                }
+            }
+        }
+        if (level == 4) {
+            ui->chooseUpgradeButton1->setDisabled(true);
+        }
         ui->taskFinishButton->setDisabled(true);
         taskCounter = 0;
         taskTarget *= 2;
         ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
-        ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
+        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
     });
     QPushButton::connect(ui->chooseUpgradeButton2, &QPushButton::clicked, [this]() {
         hideUpgradeFrame();
-        ui->minerLevelLabel->setStyleSheet("border-image: url(resources/images/level/level2-2.png);");
+        int level = Data::getMinerLevel();
+        if (level <= 3) {
+            Data::setMinerLevel(level + 1);
+            ui->minerLevelLabel->setStyleSheet("border-image: url(resources/images/level/level" + QString::number(level + 1) + "-2.png);");
+            for (int i = 0; i < ROW; i++) {
+                for (int j = 0; j < COL; j++) {
+                    Device *temp = ui->devices[i][j];
+                    if (temp->getName() == DeviceName::MINER) {
+                        temp->setSpeed(2500 - 500 * Data::getMinerLevel());
+                        if (temp->getTimerId() != -1) {
+                            temp->killTimer(temp->getTimerId());
+                            temp->setTimerId(temp->startTimer(temp->getSpeed()));
+                        }
+                    }
+                }
+            }
+        }
+        if (level == 4) {
+            ui->chooseUpgradeButton2->setDisabled(true);
+        }
         ui->taskFinishButton->setDisabled(true);
         taskCounter = 0;
         taskTarget *= 2;
@@ -92,26 +128,52 @@ void Game::connection() {
     });
     QPushButton::connect(ui->chooseUpgradeButton3, &QPushButton::clicked, [this]() {
         hideUpgradeFrame();
-        ui->conveyorLevelLabel1->setStyleSheet("border-image: url(resources/images/level/level2-3.png);");
-        ui->conveyorLevelLabel2->setStyleSheet("border-image: url(resources/images/level/level2-3.png);");
-        ui->conveyorLevelLabel3->setStyleSheet("border-image: url(resources/images/level/level2-3.png);");
+        int level = Data::getConveyorLevel();
+        if (level <= 3) {
+            Data::setConveyorLevel(level + 1);
+            ui->conveyorLevelLabel1->setStyleSheet("border-image: url(resources/images/level/level" + QString::number(level + 1) + "-3.png);");
+            ui->conveyorLevelLabel2->setStyleSheet("border-image: url(resources/images/level/level" + QString::number(level + 1) + "-3.png);");
+            ui->conveyorLevelLabel3->setStyleSheet("border-image: url(resources/images/level/level" + QString::number(level + 1) + "-3.png);");
+            for (int i = 0; i < ROW; i++) {
+                for (int j = 0; j < COL; j++) {
+                    if (DeviceName name = ui->devices[i][j]->getName(); name == DeviceName::CONVEYOR ||
+                        name == DeviceName::CONVEYOR_CHANGE1 || name == DeviceName::CONVEYOR_CHANGE2) {
+                        ui->devices[i][j]->setSpeed(1000 - 200 * Data::getConveyorLevel());
+                    }
+                }
+            }
+        }
+        if (level == 4) {
+            ui->chooseUpgradeButton3->setDisabled(true);
+        }
         ui->taskFinishButton->setDisabled(true);
         taskCounter = 0;
         taskTarget *= 2;
         ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
-        ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
+        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
     });
     QPushButton::connect(ui->centerSelectButton, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::CENTER);
         ui->isSelectingDevice = true;
-        ui->isSelected = false;
         ui->selectLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/centerSelect.png);"));
         ui->selectLabel->setGeometry(QRect(x - 80, y - 150, 160, 230));
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->cutterSelectButton, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::CUTTER);
@@ -123,6 +185,12 @@ void Game::connection() {
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->destroyerSelectButton, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::DESTROYER);
@@ -133,6 +201,12 @@ void Game::connection() {
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->minerSelectButton, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::MINER);
@@ -143,6 +217,12 @@ void Game::connection() {
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->conveyorSelectButton, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::CONVEYOR);
@@ -154,6 +234,12 @@ void Game::connection() {
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->conveyorChangeSelectButton1, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::CONVEYOR_CHANGE1);
@@ -165,6 +251,12 @@ void Game::connection() {
         ui->selectLabel->setVisible(true);
     });
     QPushButton::connect(ui->conveyorChangeSelectButton2, &QPushButton::clicked, [this]() {
+        if (ui->isSelected) {
+            ui->isSelected = false;
+            ui->rotateLeftButton->setVisible(false);
+            ui->rotateRightButton->setVisible(false);
+            ui->devices[selectDevice->y() / GROUND_WIDTH][selectDevice->x() / GROUND_WIDTH]->setVisible(false);
+        }
         int x = this->mapFromGlobal(QCursor::pos()).x();
         int y = this->mapFromGlobal(QCursor::pos()).y();
         selectDevice->setName(DeviceName::CONVEYOR_CHANGE2);
@@ -240,27 +332,47 @@ void Game::returnPress() const {
             int groundX = x / GROUND_WIDTH;
             int groundY = y / GROUND_WIDTH;
             if (selectDevice->getName() == DeviceName::CUTTER) {
+                ui->deviceNames[groundY][groundX] = DeviceName::CUTTER;
                 int direction = ui->devices[groundY][groundX]->getDirection();
                 if (direction == 1 || direction == 3) {
                     if (groundY + 1 == ROW) {
                         ui->deviceNames[groundY - 1][groundX] = DeviceName::CUTTER;
                         ui->devices[groundY - 1][groundX]->setVisible(false);
+                        ui->mines[groundY - 1][groundX]->setVisible(false);
                     } else {
                         ui->deviceNames[groundY + 1][groundX] = DeviceName::CUTTER;
                         ui->devices[groundY + 1][groundX]->setVisible(false);
+                        ui->mines[groundY + 1][groundX]->setVisible(false);
                     }
-                    
                 } else if (direction == 0 || direction == 2) {
                     if (groundX + 1 == COL) {
                         ui->deviceNames[groundY][groundX - 1] = DeviceName::CUTTER;
                         ui->devices[groundY][groundX - 1]->setVisible(false);
+                        ui->mines[groundY][groundX - 1]->setVisible(false);
                     } else {
                         ui->deviceNames[groundY][groundX + 1] = DeviceName::CUTTER;
                         ui->devices[groundY][groundX + 1]->setVisible(false);
+                        ui->mines[groundY][groundX + 1]->setVisible(false);
                     }
                 }
+            } else {
+                if (ui->deviceNames[groundY][groundX] == DeviceName::CUTTER) {
+                    if (ui->devices[groundY][groundX - 1]->getName() == DeviceName::CUTTER) {
+                        ui->deviceNames[groundY][groundX - 1] = DeviceName::NONE;
+                        ui->devices[groundY][groundX - 1]->setName(DeviceName::NONE);
+                        ui->devices[groundY][groundX - 1]->setVisible(false);
+                        ui->mines[groundY][groundX - 1]->setVisible(false);
+                    } else if (ui->devices[groundY - 1][groundX]->getName() == DeviceName::CUTTER) {
+                        ui->deviceNames[groundY - 1][groundX] = DeviceName::NONE;
+                        ui->devices[groundY - 1][groundX]->setName(DeviceName::NONE);
+                        ui->devices[groundY - 1][groundX]->setVisible(false);
+                        ui->mines[groundY - 1][groundX]->setVisible(false);
+                    }
+                }
+                ui->deviceNames[groundY][groundX] = selectDevice->getName();
             }
             ui->devices[groundY][groundX]->setIsBlocked(false);
+            ui->mines[groundY][groundX]->setVisible(false);
         }
     }
 }
@@ -324,24 +436,26 @@ void Game::mousePressSelecting(QMouseEvent const *event) {
         int groundX = x / GROUND_WIDTH;
         int groundY = y / GROUND_WIDTH;
         if (DeviceName name = selectDevice->getName(); name == DeviceName::CENTER && !ui->isCenterSelected) {
-            if (groundX == 0) {
-                groundX = 1;
-            } else if (groundX == COL - 1) {
-                groundX = COL - 2;
+            if (groundX < selectDevice->getWidth() / 2) {
+                groundX = selectDevice->getWidth() / 2;
+            } else if (groundX > COL - selectDevice->getWidth() / 2) {
+                groundX = COL - 1 - selectDevice->getWidth() / 2;
             }
-            if (groundY == 0) {
-                groundY = 1;
-            } else if (groundY == ROW - 1) {
-                groundY = ROW - 2;
+            if (groundY < selectDevice->getHeight() / 2) {
+                groundY = selectDevice->getHeight() / 2;
+            } else if (groundY > ROW - selectDevice->getHeight() / 2) {
+                groundY = ROW - 1 - selectDevice->getHeight() / 2;
             }
-            selectDevice->move(ui->groundButtons[groundY][groundX]->x() - GROUND_WIDTH,
-                               ui->groundButtons[groundY][groundX]->y() + 2 * GROUND_WIDTH - 230);
-            for (int i = -2; i <= 1; i++) {
-                for (int j = -1; j <= 1; j++) {
-                    ui->deviceNames[groundY + i][groundX + j] = name;
-                    ui->devices[groundY + i][groundX + j]->setName(DeviceName::NONE);
-                    ui->devices[groundY + i][groundX + j]->setVisible(false);
-                    ui->mines[groundY + i][groundX + j]->setVisible(false);
+            selectDevice->move(ui->groundButtons[groundY][groundX]->x() - selectDevice->getWidth() / 2 * GROUND_WIDTH,
+                               ui->groundButtons[groundY][groundX]->y() - selectDevice->getHeight() / 2 * GROUND_WIDTH);
+            for (int i = 0; i < selectDevice->getHeight(); i++) {
+                for (int j = 0; j < selectDevice->getWidth(); j++) {
+                    int indexX = groundX + j - selectDevice->getWidth() / 2;
+                    int indexY = groundY + i - selectDevice->getHeight() / 2;
+                    ui->deviceNames[indexY][indexX] = name;
+                    ui->devices[indexY][indexX]->setName(DeviceName::NONE);
+                    ui->devices[indexY][indexX]->setVisible(false);
+                    ui->mines[indexY][indexX]->setVisible(false);
                 }
             }
             ui->devices[groundY][groundX]->move(selectDevice->x(), selectDevice->y());
@@ -367,13 +481,11 @@ void Game::mousePressSelecting(QMouseEvent const *event) {
             ui->devices[groundY][groundX]->move(selectDevice->x(), selectDevice->y());
             ui->devices[groundY][groundX]->setName(name);
             ui->devices[groundY][groundX]->setVisible(true);
-            ui->deviceNames[groundY][groundX] = name;
         } else if (name != DeviceName::NONE) {
             selectDevice->move(ui->groundButtons[groundY][groundX]->x(), ui->groundButtons[groundY][groundX]->y());
             ui->devices[groundY][groundX]->move(selectDevice->x(), selectDevice->y());
             ui->devices[groundY][groundX]->setName(name);
             ui->devices[groundY][groundX]->setVisible(true);
-            ui->deviceNames[groundY][groundX] = name;
         }
         ui->selectLabel->setVisible(false);
         ui->isSelectingDevice = false;
@@ -393,6 +505,22 @@ void Game::mousePressSelecting(QMouseEvent const *event) {
             ui->rotateLeftButton->setVisible(true);
             ui->rotateRightButton->setVisible(true);
             ui->isSelected = true;
+        } else {
+            if (ui->deviceNames[groundY][groundX] == DeviceName::CUTTER) {
+                if (ui->devices[groundY][groundX - 1]->getName() == DeviceName::CUTTER) {
+                    ui->deviceNames[groundY][groundX - 1] = DeviceName::NONE;
+                    ui->devices[groundY][groundX - 1]->setName(DeviceName::NONE);
+                    ui->devices[groundY][groundX - 1]->setVisible(false);
+                    ui->mines[groundY][groundX - 1]->setVisible(false);
+                } else if (ui->devices[groundY - 1][groundX]->getName() == DeviceName::CUTTER) {
+                    ui->deviceNames[groundY - 1][groundX] = DeviceName::NONE;
+                    ui->devices[groundY - 1][groundX]->setName(DeviceName::NONE);
+                    ui->devices[groundY - 1][groundX]->setVisible(false);
+                    ui->mines[groundY - 1][groundX]->setVisible(false);
+                }
+            }
+            ui->deviceNames[groundY][groundX] = selectDevice->getName();
+            ui->mines[groundY][groundX]->setVisible(false);
         }
     }
 }
@@ -413,6 +541,18 @@ void Game::mousePressRight(const QMouseEvent *event) {
             ui->rotateRightButton->setVisible(false);
             ui->isSelected = false;
             device->setVisible(false);
+            if (name == DeviceName::CUTTER) {
+                int direction = device->getDirection();
+                if (direction == 1 || direction == 3) {
+                    ui->deviceNames[groundY + 1][groundX] = DeviceName::NONE;
+                    ui->mines[groundY + 1][groundX]->setVisible(false);
+                    ui->mines[groundY + 1][groundX]->move(groundX * GROUND_WIDTH, groundY * GROUND_WIDTH);
+                } else {
+                    ui->deviceNames[groundY][groundX + 1] = DeviceName::NONE;
+                    ui->mines[groundY][groundX + 1]->setVisible(false);
+                    ui->mines[groundY][groundX + 1]->move(groundX * GROUND_WIDTH, groundY * GROUND_WIDTH);
+                }
+            }
             device->setName(DeviceName::NONE);
             ui->deviceNames[groundY][groundX] = DeviceName::NONE;
             ui->mines[groundY][groundX]->setVisible(false);
@@ -443,19 +583,20 @@ void Game::mouseMoveSelecting(QMouseEvent const *event) {
         }
     } else {
         if (name == DeviceName::CENTER) {
-            if (groundX == 0) {
-                groundX = 1;
-            } else if (groundX == COL - 1) {
-                groundX = COL - 2;
+            if (groundX < selectDevice->getWidth() / 2) {
+                groundX = selectDevice->getWidth() / 2;
+            } else if (groundX > COL - selectDevice->getWidth() / 2) {
+                groundX = COL - 1 - selectDevice->getWidth() / 2;
             }
-            if (groundY == 0) {
-                groundY = 1;
-            } else if (groundY == ROW - 1) {
-                groundY = ROW - 2;
+            if (groundY < selectDevice->getHeight() / 2) {
+                groundY = selectDevice->getHeight() / 2;
+            } else if (groundY > ROW - selectDevice->getHeight() / 2) {
+                groundY = ROW - 1 - selectDevice->getHeight() / 2;
             }
-            ui->selectLabel->setGeometry(QRect(ui->groundButtons[groundY][groundX]->x() - GROUND_WIDTH,
-                                               ui->groundButtons[groundY][groundX]->y() + 2 * GROUND_WIDTH - 230,
-                                               3 * GROUND_WIDTH, 230));
+            selectDevice->move(ui->groundButtons[groundY][groundX]->x() - selectDevice->getWidth() / 2 * GROUND_WIDTH,
+                               ui->groundButtons[groundY][groundX]->y() - selectDevice->getHeight() / 2 * GROUND_WIDTH);
+            ui->selectLabel->setGeometry(QRect(selectDevice->x(), selectDevice->y(), selectDevice->getWidth() * GROUND_WIDTH,
+                                               selectDevice->getHeight() * GROUND_WIDTH));
         } else {
             if (name == DeviceName::CUTTER) {
                 if (groundX == COL - 1) {
@@ -488,19 +629,32 @@ void Game::initGame() {
     ui->rotateRightButton->setVisible(false);
     ui->centerSelectButton->setVisible(true);
     ui->centerSelectLabel->setVisible(true);
-    money = 0;
+    money = Data::getMoney();
     ui->moneyFrameLabel->setText(QString::number(money));
-    taskCounter = 0;
-    taskTarget = 50;
-    ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
-    ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
-    ui->cutterLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-1.png);"));
-    ui->minerLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-2.png);"));
-    ui->conveyorLevelLabel1->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
-    ui->conveyorLevelLabel2->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
-    ui->conveyorLevelLabel3->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
+    taskCounter = Data::getTaskCounter();
+    taskTarget = Data::getTaskTarget();
+    if (taskCounter == taskTarget) {
+        ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: green;text-align: left;"));
+        ui->taskFinishButton->setEnabled(true);
+    } else {
+        ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
+        ui->taskFinishButton->setEnabled(false);
+    }
+    ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
+    ui->cutterLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getCutterLevel()) + QString::fromUtf8("-1.png)"));
+    ui->minerLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                       QString::number(Data::getMinerLevel()) + QString::fromUtf8("-2.png)"));
+    ui->conveyorLevelLabel1->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                           QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    ui->conveyorLevelLabel2->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                           QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    ui->conveyorLevelLabel3->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                           QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    Data::setCutterLevel(1);
+    Data::setMinerLevel(1);
+    Data::setConveyorLevel(1);
     recoverUpgrade();
-    ui->taskFinishButton->setDisabled(true);
 }
 void Game::exitGame() {
     ui->setPauseMenu(false);
@@ -512,6 +666,24 @@ void Game::exitGame() {
     if (ui->isCenterSelected) { moveMoneyFrame(false); }
     for (int i = 0; i < ROW; i++) {
         for (int j = 0; j < COL; j++) {
+            if (ui->devices[i][j]->getTimerId() != -1) {
+                ui->devices[i][j]->killTimer(ui->devices[i][j]->getTimerId());
+                ui->devices[i][j]->setTimerId(-1);
+            }
+        }
+    }
+    Data::setMoney(money);
+    Data::setTaskCounter(taskCounter);
+    Data::setTaskTarget(taskTarget);
+}
+void Game::restartGame() {
+    ui->setPauseMenu(false);
+    if (ui->isDeviceVisible) { moveDeviceFrame(); }
+    if (ui->isTaskVisible) { moveTaskFrame(); }
+    if (ui->isUpgrading) { hideUpgradeFrame(); }
+    if (ui->isCenterSelected) { moveMoneyFrame(false); }
+    for (int i = 0; i < ROW; i++) {
+        for (int j = 0; j < COL; j++) {
             ui->devices[i][j]->setVisible(false);
             if (ui->devices[i][j]->getTimerId() != -1) {
                 ui->devices[i][j]->killTimer(ui->devices[i][j]->getTimerId());
@@ -519,8 +691,36 @@ void Game::exitGame() {
             }
             ui->devices[i][j]->setName(DeviceName::NONE);
             ui->deviceNames[i][j] = DeviceName::NONE;
+            ui->mines[i][j]->setVisible(false);
         }
     }
+    ui->initMap();
+    ui->setPauseMenu(false);
+    ui->isSelectingDevice = false;
+    ui->isSelected = false;
+    ui->isCenterSelected = false;
+    ui->selectLabel->setVisible(false);
+    ui->rotateLeftButton->setVisible(false);
+    ui->rotateRightButton->setVisible(false);
+    ui->centerSelectButton->setVisible(true);
+    ui->centerSelectLabel->setVisible(true);
+    ui->moneyFrameLabel->setText(QString::number(money));
+    Data::setTaskCounter(0);
+    Data::setTaskTarget(50);
+    Data::setCutterLevel(1);
+    Data::setMinerLevel(1);
+    Data::setConveyorLevel(1);
+    taskCounter = Data::getTaskCounter();
+    taskTarget = Data::getTaskTarget();
+    ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
+    ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
+    ui->cutterLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-1.png);"));
+    ui->minerLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-2.png);"));
+    ui->conveyorLevelLabel1->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
+    ui->conveyorLevelLabel2->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
+    ui->conveyorLevelLabel3->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level1-3.png);"));
+    recoverUpgrade();
+    ui->taskFinishButton->setDisabled(true);
 }
 
 void Game::moveDeviceFrame() const {
@@ -829,7 +1029,7 @@ void Game::moveTaskFrame() const {
         taskMineLabelAnimation->setEndValue(
                 QRect(1700 + 350, ui->taskMineLabel->y(), ui->taskMineLabel->width(), ui->taskMineLabel->height()));
         collectCountLabelAnimation->setEndValue(
-                QRect(1830 + 350, ui->collectCountLabel->y(), ui->collectCountLabel->width(), ui->collectCountLabel->height()));
+                QRect(1800 + 350, ui->collectCountLabel->y(), ui->collectCountLabel->width(), ui->collectCountLabel->height()));
         taskFinishButtonAnimation->setEndValue(
                 QRect(1740 + 350, ui->taskFinishButton->y(), ui->taskFinishButton->width(), ui->taskFinishButton->height()));
     } else {
@@ -842,7 +1042,7 @@ void Game::moveTaskFrame() const {
         taskMineLabelAnimation->setEndValue(
                 QRect(1700, ui->taskMineLabel->y(), ui->taskMineLabel->width(), ui->taskMineLabel->height()));
         collectCountLabelAnimation->setEndValue(
-                QRect(1830, ui->collectCountLabel->y(), ui->collectCountLabel->width(), ui->collectCountLabel->height()));
+                QRect(1800, ui->collectCountLabel->y(), ui->collectCountLabel->width(), ui->collectCountLabel->height()));
         taskFinishButtonAnimation->setEndValue(
                 QRect(1740, ui->taskFinishButton->y(), ui->taskFinishButton->width(), ui->taskFinishButton->height()));
     }
@@ -948,6 +1148,7 @@ void Game::displayUpgradeFrame() const {
             QRect(ui->chooseUpgradeButton1->x(), ui->chooseUpgradeButton1->y(),
                   ui->chooseUpgradeButton1->width(), ui->chooseUpgradeButton1->height()));
     chooseUpgradeButtonAnimation1->setEasingCurve(QEasingCurve::OutBack);
+    if (Data::getCutterLevel() == 4) { ui->chooseUpgradeButton1->setDisabled(true); }
     
     auto *chooseUpgradeButtonAnimation2 = new QPropertyAnimation(ui->chooseUpgradeButton2, "geometry");
     chooseUpgradeButtonAnimation2->setDuration(500);
@@ -956,6 +1157,7 @@ void Game::displayUpgradeFrame() const {
             QRect(ui->chooseUpgradeButton2->x(), ui->chooseUpgradeButton2->y(),
                   ui->chooseUpgradeButton2->width(), ui->chooseUpgradeButton2->height()));
     chooseUpgradeButtonAnimation2->setEasingCurve(QEasingCurve::OutBack);
+    if (Data::getMinerLevel() == 4) { ui->chooseUpgradeButton2->setDisabled(true); }
     
     auto *chooseUpgradeButtonAnimation3 = new QPropertyAnimation(ui->chooseUpgradeButton3, "geometry");
     chooseUpgradeButtonAnimation3->setDuration(500);
@@ -964,6 +1166,7 @@ void Game::displayUpgradeFrame() const {
             QRect(ui->chooseUpgradeButton3->x(), ui->chooseUpgradeButton3->y(),
                   ui->chooseUpgradeButton3->width(), ui->chooseUpgradeButton3->height()));
     chooseUpgradeButtonAnimation3->setEasingCurve(QEasingCurve::OutBack);
+    if (Data::getConveyorLevel() == 4) { ui->chooseUpgradeButton3->setDisabled(true); }
     
     ui->upgradeBackgroundLabel1->setVisible(true);
     ui->upgradeBackgroundLabel2->setVisible(true);
@@ -1170,17 +1373,25 @@ void Game::moveMine() {
         Device const *device = qobject_cast<Device *>(sender());
         int groundX = device->x() / GROUND_WIDTH;
         int groundY = device->y() / GROUND_WIDTH;
+        if (ui->mines[groundY][groundX]->getMineName() == MineName::COMMON) {
+            return;
+        }
         int x = groundX + device->vector[device->getDirection()][0];
         int y = groundY + device->vector[device->getDirection()][1];
+        if (x < 0 || x >= COL || y < 0 || y >= ROW || ui->devices[y][x]->getName() == DeviceName::MINER) {
+            ui->mines[groundY][groundX]->setVisible(true);
+            return;
+        }
         DeviceName name = device->getName();
-        if (name == DeviceName::MINER && ui->devices[y][x]->getName() != DeviceName::MINER) {
+        if (name == DeviceName::MINER) {
             ui->mines[groundY][groundX]->setVisible(true);
             if (ui->deviceNames[y][x] == DeviceName::CENTER) {
                 ui->mines[groundY][groundX]->leaveMotion(device->getDirection());
-                QTimer::singleShot(SPEED, [this, groundX, groundY, device]() {
+                QTimer::singleShot((1000 - Data::getConveyorLevel() * 200) / 2, [this, groundX, groundY, device]() {
                     ui->mines[groundY][groundX]->setVisible(false);
                     ui->mines[groundY][groundX]->move(device->x(), device->y());
                     money += ui->mines[groundY][groundX]->getValue();
+                    money = money > 999999 ? 999999 : money;
                     ui->moneyFrameLabel->setText(QString::number(money));
                 });
                 return;
@@ -1193,7 +1404,7 @@ void Game::moveMine() {
                 ui->mines[groundY][groundX]->move(device->x(), device->y());
             } else {
                 ui->mines[groundY][groundX]->leaveMotion(device->getDirection());
-                QTimer::singleShot(SPEED, [this, x, y, groundX, groundY, device]() {
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, x, y, groundX, groundY, device]() {
                     ui->mines[groundY][groundX]->setVisible(false);
                     ui->mines[groundY][groundX]->move(device->x(), device->y());
                     passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
@@ -1227,20 +1438,30 @@ void Game::conveyorPassMine(Device *device) {
     int groundY = device->y() / GROUND_WIDTH;
     int x = groundX + device->vector[device->getDirection()][0];
     int y = groundY + device->vector[device->getDirection()][1];
+    Mine *mine = ui->mines[groundY][groundX];
+    if (x < 0 || x >= COL || y < 0 || y >= ROW) {
+        if (!device->getIsBlocked()) {
+            device->setIsBlocked(true);
+            mine->setVisible(true);
+            mine->enterMotion(device->getDirection());
+        }
+        return;
+    }
     if (ui->deviceNames[y][x] == DeviceName::CENTER) {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
-        QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device]() {
-            ui->mines[groundY][groundX]->leaveMotion(device->getDirection());
-            QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                money += ui->mines[groundY][groundX]->getValue();
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
+        QTimer::singleShot(device->getSpeed() / 2, [this, device, mine]() {
+            mine->leaveMotion(device->getDirection());
+            QTimer::singleShot(device->getSpeed() / 2, [this, device, mine]() {
+                mine->setVisible(false);
+                mine->move(device->x(), device->y());
+                money += mine->getValue();
+                money = money > 999999 ? 999999 : money;
                 ui->moneyFrameLabel->setText(QString::number(money));
-                if (ui->mines[groundY][groundX]->getMineName() == MineName::SINGLE_EMERALD) {
+                if (mine->getMineName() == MineName::SINGLE_EMERALD) {
                     if (taskCounter < taskTarget) {
                         taskCounter += 1;
-                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
+                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
                     }
                     if (taskCounter == taskTarget) {
                         ui->taskFinishButton->setEnabled(true);
@@ -1261,19 +1482,19 @@ void Game::conveyorPassMine(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            ui->mines[groundY][groundX]->move(device->x(), device->y());
-            passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            mine->move(device->x(), device->y());
+            passMine(ui->devices[y][x], mine->getMineName());
         } else {
-            ui->mines[groundY][groundX]->leaveMotion(device->getDirection());
+            mine->leaveMotion(device->getDirection());
             device->setIsBlocked(false);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, mine]() {
+                mine->setVisible(false);
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         }
     } else {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
         if ((ui->devices[y][x]->getDirection() != device->getDirection() && ui->devices[y][x]->getName() != DeviceName::DESTROYER)
             || ui->devices[y][x]->getName() == DeviceName::MINER) {
             device->setIsBlocked(true);
@@ -1281,18 +1502,18 @@ void Game::conveyorPassMine(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                mine->move(device->x(), device->y());
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         } else {
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->leaveMotion(device->getDirection());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                mine->leaveMotion(device->getDirection());
                 device->setIsBlocked(false);
-                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                    ui->mines[groundY][groundX]->setVisible(false);
-                    ui->mines[groundY][groundX]->move(device->x(), device->y());
-                    passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                    mine->setVisible(false);
+                    mine->move(device->x(), device->y());
+                    passMine(ui->devices[y][x], mine->getMineName());
                 });
             });
         }
@@ -1307,20 +1528,30 @@ void Game::conveyorChangePassMine1(Device *device) {
     int direction = (device->getDirection() + 1) % 4;
     int x = groundX + device->vector[direction][0];
     int y = groundY + device->vector[direction][1];
+    Mine *mine = ui->mines[groundY][groundX];
+    if (x < 0 || x >= COL || y < 0 || y >= ROW) {
+        if (!device->getIsBlocked()) {
+            device->setIsBlocked(true);
+            mine->setVisible(true);
+            mine->enterMotion(device->getDirection());
+        }
+        return;
+    }
     if (ui->deviceNames[y][x] == DeviceName::CENTER) {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
-        QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device, direction]() {
-            ui->mines[groundY][groundX]->leaveMotion(direction);
-            QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                money += ui->mines[groundY][groundX]->getValue();
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
+        QTimer::singleShot(device->getSpeed() / 2, [this, device, direction, mine]() {
+            mine->leaveMotion(direction);
+            QTimer::singleShot(device->getSpeed() / 2, [this, device, mine]() {
+                mine->setVisible(false);
+                mine->move(device->x(), device->y());
+                money += mine->getValue();
+                money = money > 999999 ? 999999 : money;
                 ui->moneyFrameLabel->setText(QString::number(money));
-                if (ui->mines[groundY][groundX]->getMineName() == MineName::SINGLE_EMERALD) {
+                if (mine->getMineName() == MineName::SINGLE_EMERALD) {
                     if (taskCounter < taskTarget) {
                         taskCounter += 1;
-                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
+                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
                     }
                     if (taskCounter == taskTarget) {
                         ui->taskFinishButton->setEnabled(true);
@@ -1341,19 +1572,19 @@ void Game::conveyorChangePassMine1(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            ui->mines[groundY][groundX]->move(device->x(), device->y());
-            passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            mine->move(device->x(), device->y());
+            passMine(ui->devices[y][x], mine->getMineName());
         } else {
-            ui->mines[groundY][groundX]->leaveMotion(direction);
+            mine->leaveMotion(direction);
             device->setIsBlocked(false);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, mine]() {
+                mine->setVisible(false);
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         }
     } else {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
         if ((ui->devices[y][x]->getDirection() != direction && ui->devices[y][x]->getName() != DeviceName::DESTROYER) ||
             ui->devices[y][x]->getName() == DeviceName::MINER) {
             device->setIsBlocked(true);
@@ -1361,18 +1592,18 @@ void Game::conveyorChangePassMine1(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                mine->move(device->x(), device->y());
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         } else {
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device, direction]() {
-                ui->mines[groundY][groundX]->leaveMotion(direction);
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, direction, mine]() {
+                mine->leaveMotion(direction);
                 device->setIsBlocked(false);
-                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                    ui->mines[groundY][groundX]->setVisible(false);
-                    ui->mines[groundY][groundX]->move(device->x(), device->y());
-                    passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                    mine->setVisible(false);
+                    mine->move(device->x(), device->y());
+                    passMine(ui->devices[y][x], mine->getMineName());
                 });
             });
         }
@@ -1387,20 +1618,30 @@ void Game::conveyorChangePassMine2(Device *device) {
     int direction = (device->getDirection() - 1 + 4) % 4;
     int x = groundX + device->vector[direction][0];
     int y = groundY + device->vector[direction][1];
+    Mine *mine = ui->mines[groundY][groundX];
+    if (x < 0 || x >= COL || y < 0 || y >= ROW) {
+        if (!device->getIsBlocked()) {
+            device->setIsBlocked(true);
+            mine->setVisible(true);
+            mine->enterMotion(device->getDirection());
+        }
+        return;
+    }
     if (ui->deviceNames[y][x] == DeviceName::CENTER) {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
-        QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device, direction]() {
-            ui->mines[groundY][groundX]->leaveMotion(direction);
-            QTimer::singleShot(device->getSpeed() / 2, [this, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                money += ui->mines[groundY][groundX]->getValue();
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
+        QTimer::singleShot(device->getSpeed() / 2, [this, device, direction, mine]() {
+            mine->leaveMotion(direction);
+            QTimer::singleShot(device->getSpeed() / 2, [this, device, mine]() {
+                mine->setVisible(false);
+                mine->move(device->x(), device->y());
+                money += mine->getValue();
+                money = money > 999999 ? 999999 : money;
                 ui->moneyFrameLabel->setText(QString::number(money));
-                if (ui->mines[groundY][groundX]->getMineName() == MineName::SINGLE_EMERALD) {
+                if (mine->getMineName() == MineName::SINGLE_EMERALD) {
                     if (taskCounter < taskTarget) {
                         taskCounter += 1;
-                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
+                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
                     }
                     if (taskCounter == taskTarget) {
                         ui->taskFinishButton->setEnabled(true);
@@ -1421,19 +1662,19 @@ void Game::conveyorChangePassMine2(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            ui->mines[groundY][groundX]->move(device->x(), device->y());
-            passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            mine->move(device->x(), device->y());
+            passMine(ui->devices[y][x], mine->getMineName());
         } else {
-            ui->mines[groundY][groundX]->leaveMotion(direction);
+            mine->leaveMotion(direction);
             device->setIsBlocked(false);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY]() {
-                ui->mines[groundY][groundX]->setVisible(false);
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, mine]() {
+                mine->setVisible(false);
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         }
     } else {
-        ui->mines[groundY][groundX]->setVisible(true);
-        ui->mines[groundY][groundX]->enterMotion(device->getDirection());
+        mine->setVisible(true);
+        mine->enterMotion(device->getDirection());
         if ((ui->devices[y][x]->getDirection() != direction && ui->devices[y][x]->getName() != DeviceName::DESTROYER) ||
             ui->devices[y][x]->getName() == DeviceName::MINER) {
             device->setIsBlocked(true);
@@ -1441,18 +1682,18 @@ void Game::conveyorChangePassMine2(Device *device) {
         }
         if (ui->devices[y][x]->getIsBlocked()) {
             device->setIsBlocked(true);
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                ui->mines[groundY][groundX]->move(device->x(), device->y());
-                passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device, mine]() {
+                mine->move(device->x(), device->y());
+                passMine(ui->devices[y][x], mine->getMineName());
             });
         } else {
-            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device, direction]() {
-                ui->mines[groundY][groundX]->leaveMotion(direction);
+            QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, direction, mine]() {
+                mine->leaveMotion(direction);
                 device->setIsBlocked(false);
-                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, groundX, groundY, device]() {
-                    ui->mines[groundY][groundX]->setVisible(false);
-                    ui->mines[groundY][groundX]->move(device->x(), device->y());
-                    passMine(ui->devices[y][x], ui->mines[groundY][groundX]->getMineName());
+                QTimer::singleShot(device->getSpeed() / 2, [this, x, y, device, mine]() {
+                    mine->setVisible(false);
+                    mine->move(device->x(), device->y());
+                    passMine(ui->devices[y][x], mine->getMineName());
                 });
             });
         }
@@ -1470,32 +1711,23 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
     int y1 = device->y();
     int x2;
     int y2;
-    Device *nextDevice1 = ui->devices[y][x];
-    Device *nextDevice2;
-    DeviceName deviceName1 = ui->deviceNames[y][x];
-    DeviceName deviceName2;
+    
     Mine *mine1 = ui->mines[groundY][groundX];
     Mine *mine2;
     switch (device->getDirection()) {
         case 0:
         case 2:
-            nextDevice2 = ui->devices[y][x + 1];
-            deviceName2 = ui->deviceNames[y][x + 1];
             mine2 = ui->mines[groundY][groundX + 1];
             x2 = x1 + GROUND_WIDTH;
             y2 = y1;
             break;
         case 1:
         case 3:
-            nextDevice2 = ui->devices[y + 1][x];
-            deviceName2 = ui->deviceNames[y + 1][x];
             mine2 = ui->mines[groundY + 1][groundX];
             x2 = x1;
             y2 = y1 + GROUND_WIDTH;
             break;
         default:
-            nextDevice2 = ui->devices[y][x];
-            deviceName2 = ui->deviceNames[y][x];
             mine2 = ui->mines[groundY][groundX];
             x2 = x1;
             y2 = y1;
@@ -1504,30 +1736,72 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
     if (mineName == MineName::EMERALD || mineName == MineName::SINGLE_EMERALD) {
         mine1->setMineName(MineName::SINGLE_EMERALD);
         mine2->setMineName(MineName::SINGLE_EMERALD);
-        QTimer::singleShot(device->getSpeed(), [mine1, mine2]() {
-            mine1->setVisible(true);
-            mine2->setVisible(true);
+    }
+    if (x < 0 || x >= COL || y < 0 || y >= ROW) {
+        if (!device->getIsBlocked()) {
+            device->setIsBlocked(true);
+            QTimer::singleShot(device->getSpeed(), [device, mine1, x1, y1, mine2, x2, y2]() {
+                if (device->isVisible()) {
+                    mine1->setVisible(true);
+                    mine1->move(x1, y1);
+                    mine2->setVisible(true);
+                    mine2->move(x2, y2);
+                }
+            });
+        }
+        return;
+    }
+    Device *nextDevice1 = ui->devices[y][x];
+    DeviceName deviceName1 = ui->deviceNames[y][x];
+    Device *nextDevice2;
+    DeviceName deviceName2;
+    switch (device->getDirection()) {
+        case 0:
+        case 2:
+            nextDevice2 = ui->devices[y][x + 1];
+            deviceName2 = ui->deviceNames[y][x + 1];
+            break;
+        case 1:
+        case 3:
+            nextDevice2 = ui->devices[y + 1][x];
+            deviceName2 = ui->deviceNames[y + 1][x];
+            break;
+        default:
+            nextDevice2 = ui->devices[y][x];
+            deviceName2 = ui->deviceNames[y][x];
+            break;
+    }
+    
+    if (mineName == MineName::EMERALD || mineName == MineName::SINGLE_EMERALD) {
+        QTimer::singleShot(device->getSpeed(), [device, mine1, x1, y1, mine2, x2, y2]() {
+            if (device->isVisible()) {
+                mine1->setVisible(true);
+                mine1->move(x1, y1);
+                mine2->setVisible(true);
+                mine2->move(x2, y2);
+            }
         });
+        bool isCenter = false;
         if (deviceName1 == DeviceName::CENTER) {
+            isCenter = true;
             device->setIsBlocked(false);
             QTimer::singleShot(device->getSpeed(), [this, mine1, device, x1, y1]() {
                 mine1->leaveMotion(device->getDirection());
-                QTimer::singleShot(SPEED, [this, mine1, x1, y1]() {
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, mine1, x1, y1]() {
                     mine1->setVisible(false);
                     mine1->move(x1, y1);
                     money += mine1->getValue();
+                    money = money > 999999 ? 999999 : money;
                     ui->moneyFrameLabel->setText(QString::number(money));
-                    if (mine1->getMineName() == MineName::SINGLE_EMERALD) {
-                        if (taskCounter < taskTarget) {
-                            taskCounter += 1;
-                            ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
-                        }
-                        if (taskCounter == taskTarget) {
-                            ui->taskFinishButton->setEnabled(true);
-                            ui->taskFinishButton->setStyleSheet(QString::fromUtf8("QPushButton{border: none;background: transparent;}; "
-                                                                                  "color: yellow; text-align: center;"));
-                            ui->collectCountLabel->setStyleSheet("color: green;text-align: left;");
-                        }
+                    if (taskCounter < taskTarget) {
+                        taskCounter += 1;
+                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
+                    }
+                    if (taskCounter == taskTarget) {
+                        ui->taskFinishButton->setEnabled(true);
+                        ui->taskFinishButton->setStyleSheet(QString::fromUtf8("QPushButton{border: none;background: transparent;}; "
+                                                                              "color: yellow; text-align: center;"));
+                        ui->collectCountLabel->setStyleSheet("color: green;text-align: left;");
                     }
                 });
             });
@@ -1536,25 +1810,27 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
             device->setIsBlocked(false);
             QTimer::singleShot(device->getSpeed(), [this, mine2, device, x2, y2]() {
                 mine2->leaveMotion(device->getDirection());
-                QTimer::singleShot(SPEED, [this, mine2, x2, y2]() {
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, mine2, x2, y2]() {
                     mine2->setVisible(false);
                     mine2->move(x2, y2);
                     money += mine2->getValue();
+                    money = money > 999999 ? 999999 : money;
                     ui->moneyFrameLabel->setText(QString::number(money));
-                    if (mine2->getMineName() == MineName::SINGLE_EMERALD) {
-                        if (taskCounter < taskTarget) {
-                            taskCounter += 1;
-                            ui->collectCountLabel->setText(QString::number(taskCounter) + "/" + QString::number(taskTarget));
-                        }
-                        if (taskCounter == taskTarget) {
-                            ui->taskFinishButton->setEnabled(true);
-                            ui->taskFinishButton->setStyleSheet(QString::fromUtf8("QPushButton{border: none;background: transparent;}; "
-                                                                                  "color: yellow; text-align: center;"));
-                            ui->collectCountLabel->setStyleSheet("color: green;text-align: left;");
-                        }
+                    if (taskCounter < taskTarget) {
+                        taskCounter += 1;
+                        ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
+                    }
+                    if (taskCounter == taskTarget) {
+                        ui->taskFinishButton->setEnabled(true);
+                        ui->taskFinishButton->setStyleSheet(QString::fromUtf8("QPushButton{border: none;background: transparent;}; "
+                                                                              "color: yellow; text-align: center;"));
+                        ui->collectCountLabel->setStyleSheet("color: green;text-align: left;");
                     }
                 });
             });
+            if (isCenter) {
+                return;
+            }
         }
         if (((nextDevice1->getDirection() != device->getDirection() && nextDevice1->getName() != DeviceName::DESTROYER) ||
              nextDevice1->getName() == DeviceName::MINER) && ((nextDevice2->getDirection() != device->getDirection() &&
@@ -1571,6 +1847,15 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                     device->setIsBlocked(true);
                     mine2->move(x2, y2);
                     passMine(nextDevice2, mine2->getMineName());
+                } else {
+                    QTimer::singleShot(device->getSpeed(), [this, device, nextDevice2, mine2, x2, y2]() {
+                        mine2->leaveMotion(device->getDirection());
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice2, mine2, x2, y2]() {
+                            mine2->setVisible(false);
+                            mine2->move(x2, y2);
+                            passMine(nextDevice2, mine2->getMineName());
+                        });
+                    });
                 }
                 return;
             }
@@ -1582,6 +1867,15 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                     device->setIsBlocked(true);
                     mine1->move(x1, y1);
                     passMine(nextDevice1, mine1->getMineName());
+                } else {
+                    QTimer::singleShot(device->getSpeed(), [this, device, nextDevice1, mine1, x1, y1]() {
+                        mine1->leaveMotion(device->getDirection());
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice1, mine1, x1, y1]() {
+                            mine1->setVisible(false);
+                            mine1->move(x1, y1);
+                            passMine(nextDevice1, mine1->getMineName());
+                        });
+                    });
                 }
                 return;
             }
@@ -1595,84 +1889,97 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                 device->setIsBlocked(false);
                 mine2->move(x2, y2);
                 passMine(nextDevice2, mine2->getMineName());
+                mine1->setVisible(true);
+                mine1->leaveMotion(device->getDirection());
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, mine1, nextDevice1, x1, y1]() {
+                    mine1->setVisible(false);
+                    mine1->move(x1, y1);
+                    passMine(nextDevice1, mine1->getMineName());
+                });
             } else if (nextDevice1->getIsBlocked() &&!nextDevice2->getIsBlocked()) {
                 device->setIsBlocked(false);
                 mine1->move(x1, y1);
                 passMine(nextDevice1, mine1->getMineName());
+                mine2->setVisible(true);
+                mine2->leaveMotion(device->getDirection());
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, mine2, nextDevice2, x2, y2]() {
+                    mine2->setVisible(false);
+                    mine2->move(x2, y2);
+                    passMine(nextDevice2, mine2->getMineName());
+                });
             } else {
                 device->setIsBlocked(false);
+                mine1->setVisible(true);
+                mine2->setVisible(true);
+                mine1->leaveMotion(device->getDirection());
+                mine2->leaveMotion(device->getDirection());
+                QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, mine1, nextDevice1,
+                                                                 x1, y1, mine2, nextDevice2, x2, y2]() {
+                    mine1->setVisible(false);
+                    mine1->move(x1, y1);
+                    passMine(nextDevice1, mine1->getMineName());
+                    mine2->setVisible(false);
+                    mine2->move(x2, y2);
+                    passMine(nextDevice2, mine2->getMineName());
+                });
             }
         } else {
             if ((nextDevice1->getDirection() != device->getDirection() && nextDevice1->getName() != DeviceName::DESTROYER)
                 || nextDevice1->getName() == DeviceName::MINER) {
                 device->setIsBlocked(false);
-                QTimer::singleShot(1000, [mine1, x1, y1]() {
-                    mine1->move(x1, y1);
-                });
-                if (nextDevice2->getIsBlocked()) {
-                    device->setIsBlocked(true);
-                    QTimer::singleShot(1000, [this, nextDevice2, mine2, x2, y2]() {
+                mine1->move(x1, y1);
+                QTimer::singleShot(device->getSpeed(), [this, device, nextDevice2, mine2, x2, y2]() {
+                    if (nextDevice2->getIsBlocked()) {
+                        device->setIsBlocked(true);
                         mine2->move(x2, y2);
                         passMine(nextDevice2, mine2->getMineName());
-                    });
-                } else if (!nextDevice2->getIsBlocked()) {
-                    QTimer::singleShot(1000, [this, device, nextDevice2, mine2, x2, y2]() {
-                        if (!nextDevice2->getIsBlocked()) {
-                            mine2->leaveMotion(device->getDirection());
-                            QTimer::singleShot(SPEED, [this, nextDevice2, mine2]() {
-                                mine2->setVisible(false);
-                                passMine(nextDevice2, mine2->getMineName());
-                            });
-                        } else {
+                    } else {
+                        mine2->leaveMotion(device->getDirection());
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice2, mine2, x2, y2]() {
+                            mine2->setVisible(false);
                             mine2->move(x2, y2);
                             passMine(nextDevice2, mine2->getMineName());
-                        }
-                    });
-                }
+                        });
+                    }
+                });
                 return;
             }
             if ((nextDevice2->getDirection() != device->getDirection() && nextDevice2->getName() != DeviceName::DESTROYER)
                 || nextDevice2->getName() == DeviceName::MINER) {
                 device->setIsBlocked(false);
-                QTimer::singleShot(1000, [mine2, x2, y2]() {
-                    mine2->move(x2, y2);
-                });
-                if (nextDevice1->getIsBlocked()) {
-                    device->setIsBlocked(true);
-                    QTimer::singleShot(1000, [this, nextDevice1, mine1, x1, y1]() {
+                mine2->move(x2, y2);
+                QTimer::singleShot(device->getSpeed(), [this, device, nextDevice1, mine1, x1, y1]() {
+                    if (nextDevice1->getIsBlocked()) {
+                        device->setIsBlocked(true);
                         mine1->move(x1, y1);
                         passMine(nextDevice1, mine1->getMineName());
-                    });
-                } else if (!nextDevice1->getIsBlocked()) {
-                    QTimer::singleShot(1000, [this, device, nextDevice1, mine1, x1, y1]() {
-                        if (!nextDevice1->getIsBlocked()) {
-                            mine1->leaveMotion(device->getDirection());
-                            QTimer::singleShot(SPEED, [this, nextDevice1, mine1]() {
-                                mine1->setVisible(false);
-                                passMine(nextDevice1, mine1->getMineName());
-                            });
-                        } else {
+                    } else {
+                        mine1->leaveMotion(device->getDirection());
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice1, mine1, x1, y1]() {
+                            mine1->setVisible(false);
                             mine1->move(x1, y1);
                             passMine(nextDevice1, mine1->getMineName());
-                        }
-                    });
-                }
+                        });
+                    }
+                });
                 return;
             }
             if (nextDevice1->getIsBlocked() && nextDevice2->getIsBlocked()) {
                 device->setIsBlocked(true);
-                QTimer::singleShot(device->getSpeed(), [this, nextDevice1, mine1, nextDevice2, mine2, x1, y1, x2, y2]() {
-                    mine1->move(x1, y1);
-                    passMine(nextDevice1, mine1->getMineName());
-                    mine2->move(x2, y2);
-                    passMine(nextDevice2, mine2->getMineName());
+                QTimer::singleShot(device->getSpeed(), [this, device, nextDevice1, mine1, nextDevice2, mine2, x1, y1, x2, y2]() {
+                    if (device->isVisible()) {
+                        mine1->move(x1, y1);
+                        passMine(nextDevice1, mine1->getMineName());
+                        mine2->move(x2, y2);
+                        passMine(nextDevice2, mine2->getMineName());
+                    }
                 });
             } else if (!nextDevice1->getIsBlocked() && nextDevice2->getIsBlocked()) {
                 QTimer::singleShot(device->getSpeed(), [this, device, nextDevice1, mine1, x1, y1, nextDevice2, mine2, x2, y2]() {
                     device->setIsBlocked(false);
                     if (!nextDevice1->getIsBlocked()) {
                         mine1->leaveMotion(device->getDirection());
-                        QTimer::singleShot(SPEED, [this, nextDevice1, mine1, x1, y1]() {
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice1, mine1, x1, y1]() {
                             mine1->setVisible(false);
                             mine1->move(x1, y1);
                             passMine(nextDevice1, mine1->getMineName());
@@ -1691,7 +1998,7 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                     device->setIsBlocked(false);
                     if (!nextDevice2->getIsBlocked()) {
                         mine2->leaveMotion(device->getDirection());
-                        QTimer::singleShot(SPEED, [this, nextDevice2, mine2, x2, y2]() {
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice2, mine2, x2, y2]() {
                             mine2->setVisible(false);
                             mine2->move(x2, y2);
                             passMine(nextDevice2, mine2->getMineName());
@@ -1706,7 +2013,7 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                     device->setIsBlocked(false);
                     if (!nextDevice1->getIsBlocked()) {
                         mine1->leaveMotion(device->getDirection());
-                        QTimer::singleShot(SPEED, [this, nextDevice1, mine1, x1, y1]() {
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice1, mine1, x1, y1]() {
                             mine1->setVisible(false);
                             mine1->move(x1, y1);
                             passMine(nextDevice1, mine1->getMineName());
@@ -1717,7 +2024,7 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
                     }
                     if (!nextDevice2->getIsBlocked()) {
                         mine2->leaveMotion(device->getDirection());
-                        QTimer::singleShot(SPEED, [this, nextDevice2, mine2, x2, y2]() {
+                        QTimer::singleShot((1000 - 200 * Data::getConveyorLevel()) / 2, [this, nextDevice2, mine2, x2, y2]() {
                             mine2->setVisible(false);
                             mine2->move(x2, y2);
                             passMine(nextDevice2, mine2->getMineName());
@@ -1734,6 +2041,13 @@ void Game::cutterPassMine(Device *device, MineName mineName) {
     }
 }
 
+void Game::closeEvent(QCloseEvent *event) {
+    exitGame();
+    Config::saveGlobalData();
+    saveGame();
+    event->accept();
+}
+
 bool Game::eventFilter(QObject *object, QEvent *event) {
     if (!ui->isPaused) {
         if (buttonPrompt(object, event)) { return true; }
@@ -1742,18 +2056,18 @@ bool Game::eventFilter(QObject *object, QEvent *event) {
         int y = this->mapFromGlobal(QCursor::pos()).y();
         int groundX = x / GROUND_WIDTH;
         int groundY = y / GROUND_WIDTH;
-        if (ui->isSelectingDevice && event->type() == QEvent::HoverEnter) {
-            if (object == ui->groundButtons[groundY][groundX]) {
+        if (ui->isSelectingDevice && event->type() == QEvent::HoverEnter && ui->deviceNames[groundY][groundX] != DeviceName::CENTER) {
+            if (Device const *device = ui->devices[groundY][groundX]; object == device || object == ui->mines[groundY][groundX]) {
                 if (DeviceName name = selectDevice->getName(); name == DeviceName::CENTER) {
-                    ui->selectLabel->setGeometry(QRect(ui->groundButtons[groundY][groundX]->x() - GROUND_WIDTH,
-                                                       ui->groundButtons[groundY][groundX]->y() + 2 * GROUND_WIDTH - 230,
-                                                       3 * GROUND_WIDTH, 230));
+                    ui->selectLabel->setGeometry(QRect(ui->groundButtons[groundY][groundX]->x() - selectDevice->getWidth() / 2 * GROUND_WIDTH,
+                                                       ui->groundButtons[groundY][groundX]->y() + selectDevice->getHeight() / 2 * GROUND_WIDTH,
+                                                       selectDevice->getWidth() * GROUND_WIDTH, selectDevice->getHeight() * GROUND_WIDTH));
                 } else {
                     ui->selectLabel->setGeometry(
                             QRect(ui->groundButtons[groundY][groundX]->x(), ui->groundButtons[groundY][groundX]->y(),
                                   GROUND_WIDTH * selectDevice->getWidth(), GROUND_WIDTH * selectDevice->getHeight()));
                 }
-            } else if (object == ui->devices[groundY][groundX] && ui->devices[groundY][groundX]->getName() != DeviceName::CENTER) {
+            }  else {
                 ui->selectLabel->setGeometry(
                         QRect(ui->groundButtons[groundY][groundX]->x(), ui->groundButtons[groundY][groundX]->y(),
                               GROUND_WIDTH * selectDevice->getWidth(), GROUND_WIDTH * selectDevice->getHeight()));
@@ -1768,6 +2082,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
         if (event->type() == QEvent::HoverEnter) {
             ui->deviceFrameButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/frameButton.png);"
                                                              "color: yellow;text-align: left;padding-left: 35px;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->deviceFrameButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/frameButton.png);"
@@ -1777,6 +2092,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
     } else if (object == ui->centerSelectButton) {
         if (event->type() == QEvent::HoverEnter) {
             ui->centerSelectLabel->setStyleSheet(QString::fromUtf8("color: yellow;text-align: center;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->centerSelectLabel->setStyleSheet(QString::fromUtf8("color: white;text-align: center;"));
@@ -1785,6 +2101,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
     } else if (object == ui->cutterSelectButton) {
         if (event->type() == QEvent::HoverEnter) {
             ui->cutterSelectLabel->setStyleSheet(QString::fromUtf8("color: yellow;text-align: center;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->cutterSelectLabel->setStyleSheet(QString::fromUtf8("color: white;text-align: center;"));
@@ -1793,6 +2110,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
     } else if (object == ui->destroyerSelectButton) {
         if (event->type() == QEvent::HoverEnter) {
             ui->destroyerSelectLabel->setStyleSheet(QString::fromUtf8("color: yellow;text-align: center;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->destroyerSelectLabel->setStyleSheet(QString::fromUtf8("color: white;text-align: center;"));
@@ -1801,6 +2119,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
     } else if (object == ui->minerSelectButton) {
         if (event->type() == QEvent::HoverEnter) {
             ui->minerSelectLabel->setStyleSheet(QString::fromUtf8("color: yellow;text-align: center;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->minerSelectLabel->setStyleSheet(QString::fromUtf8("color: white;text-align: center;"));
@@ -1809,6 +2128,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
     } else if (object == ui->conveyorSelectButton || object == ui->conveyorChangeSelectButton1 || object == ui->conveyorChangeSelectButton2) {
         if (event->type() == QEvent::HoverEnter) {
             ui->conveyorSelectLabel->setStyleSheet(QString::fromUtf8("color: yellow;text-align: center;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->conveyorSelectLabel->setStyleSheet(QString::fromUtf8("color: white;text-align: center;"));
@@ -1818,6 +2138,7 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
         if (event->type() == QEvent::HoverEnter) {
             ui->taskFrameButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/taskFrameButton.png);"
                                                                  "color: yellow;text-align: top;padding-top: 35px;"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->taskFrameButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/taskFrameButton.png);"
@@ -1826,4 +2147,270 @@ bool Game::buttonPrompt(QObject const *object, QEvent const *event) const {
         }
     }
     return false;
+}
+
+void Game::read(const QJsonObject &json) {
+    ui->isPaused = json["status"].toArray()[0].toBool();
+    ui->setPauseMenu(ui->isPaused);
+    ui->isCenterSelected = json["status"].toArray()[1].toBool();
+    ui->centerSelectLabel->setVisible(!ui->isCenterSelected);
+    ui->centerSelectButton->setVisible(!ui->isCenterSelected);
+    ui->isSelectingDevice = false;
+    ui->isSelected = false;
+    ui->selectLabel->setVisible(false);
+    ui->rotateRightButton->setVisible(false);
+    ui->rotateLeftButton->setVisible(false);
+    QJsonArray mineNamesArray = json["mineNames"].toArray();
+    for (int i = 0; i < ROW; i++) {
+        QJsonArray rowArray = mineNamesArray[i].toArray();
+        for (int j = 0; j < COL; j++) {
+            QString mineName = rowArray[j].toString();
+            if (mineName == "common") {
+                ui->mineNames[i][j] = MineName::COMMON;
+                ui->groundButtons[i][j]->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/commonRock.png);"));
+                ui->mines[i][j]->setMineName(MineName::COMMON);
+                ui->mines[i][j]->setVisible(false);
+            } else if (mineName == "emerald") {
+                ui->mineNames[i][j] = MineName::EMERALD;
+                ui->groundButtons[i][j]->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/emerald.png);"));
+                ui->mines[i][j]->setMineName(MineName::EMERALD);
+                ui->mines[i][j]->setVisible(false);
+            } else if (mineName == "diamond") {
+                ui->mineNames[i][j] = MineName::DIAMOND;
+                ui->groundButtons[i][j]->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/diamond.png);"));
+                ui->mines[i][j]->setMineName(MineName::DIAMOND);
+                ui->mines[i][j]->setVisible(false);
+            }
+        }
+    }
+    QJsonArray devicesArray = json["devices"].toArray();
+    int centerX = 0;
+    int centerY = 0;
+    for (int i = 0; i < ROW; i++) {
+        QJsonArray rowArray = devicesArray[i].toArray();
+        for (int j = 0; j < COL; j++) {
+            QJsonObject deviceObject = rowArray[j].toObject();
+            QString name = deviceObject["name"].toString();
+            bool isVisible = deviceObject["isVisible"].toBool();
+            int direction = deviceObject["direction"].toInt();
+            Device *device = ui->devices[i][j];
+            if (ui->isCenterSelected && name == "center") {
+                int width = 1 + 2 * Data::getCenterLevel();
+                int height = (int)(width * 1.33) + 1;
+                if (j < width / 2) {
+                    j = width / 2;
+                } else if (j > COL - width / 2) {
+                    j = COL - width / 2 - 1;
+                }
+                if (i < height / 2) {
+                    i = height / 2;
+                } else if (i > ROW - height / 2) {
+                    i = ROW - height / 2 - 1;
+                }
+                centerX = j;
+                centerY = i;
+            } else if (name == "cutter") {
+                device->setName(DeviceName::CUTTER);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::CUTTER;
+                ui->mines[i][j]->setVisible(false);
+                switch (direction) {
+                    case 0:
+                    case 2:
+                        ui->devices[i][j + 1]->setName(DeviceName::NONE);
+                        ui->deviceNames[i][j + 1] = DeviceName::CUTTER;
+                        ui->mines[i][j + 1]->setVisible(false);
+                        break;
+                    case 1:
+                    case 3:
+                        ui->devices[i + 1][j]->setName(DeviceName::NONE);
+                        ui->deviceNames[i + 1][j] = DeviceName::CUTTER;
+                        ui->mines[i + 1][j]->setVisible(false);
+                        break;
+                    default:
+                        break;
+                }
+            } else if (name == "destroyer") {
+                device->setName(DeviceName::DESTROYER);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::DESTROYER;
+                ui->mines[i][j]->setVisible(false);
+                device->setDirection(direction);
+            } else if (name == "miner") {
+                device->setName(DeviceName::MINER);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::MINER;
+                ui->mines[i][j]->setVisible(false);
+            } else if (name == "conveyor") {
+                device->setName(DeviceName::CONVEYOR);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::CONVEYOR;
+                ui->mines[i][j]->setVisible(false);
+            } else if (name == "conveyor_change1") {
+                device->setName(DeviceName::CONVEYOR_CHANGE1);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::CONVEYOR_CHANGE1;
+                ui->mines[i][j]->setVisible(false);
+            } else if (name == "conveyor_change2") {
+                device->setName(DeviceName::CONVEYOR_CHANGE2);
+                device->setVisible(true);
+                ui->deviceNames[i][j] = DeviceName::CONVEYOR_CHANGE2;
+                ui->mines[i][j]->setVisible(false);
+            }
+            if (device->getIsRotatable()) {
+                while (direction != device->getDirection()) {
+                    device->rotateRight();
+                }
+            }
+            device->setVisible(isVisible);
+        }
+    }
+    if (ui->isCenterSelected) {
+        Device *device = ui->devices[centerY][centerX];
+        device->setName(DeviceName::CENTER);
+        for (int i = 0; i < device->getHeight(); i++) {
+            for (int j = 0; j < device->getWidth(); j++) {
+                int indexX = centerX + j - device->getWidth() / 2;
+                int indexY = centerY + i - device->getHeight() / 2;
+                ui->devices[indexY][indexX]->setIsBlocked(false);
+                if (ui->deviceNames[indexY][indexX] == DeviceName::CUTTER && ui->devices[indexY][indexX]->getName() != DeviceName::CUTTER) {
+                    if (ui->devices[indexY][indexX - 1]->getName() == DeviceName::CUTTER) {
+                        ui->deviceNames[indexY][indexX - 1] = DeviceName::NONE;
+                        ui->devices[indexY][indexX - 1]->setVisible(false);
+                        ui->mines[indexY][indexX - 1]->setVisible(false);
+                    } else if (ui->devices[indexY - 1][indexX]->getName() == DeviceName::CUTTER) {
+                        ui->deviceNames[indexY - 1][indexX] = DeviceName::NONE;
+                        ui->mines[indexY - 1][indexX]->setVisible(false);
+                        ui->devices[indexY - 1][indexX]->setVisible(false);
+                    }
+                }
+                if (indexY != centerY || indexX != centerX) {
+                    ui->devices[indexY][indexX]->setVisible(false);
+                    ui->devices[indexY][indexX]->setName(DeviceName::NONE);
+                }
+                ui->deviceNames[indexY][indexX] = DeviceName::CENTER;
+                ui->mines[indexY][indexX]->setVisible(false);
+            }
+        }
+        device->setGeometry((centerX - device->getWidth() / 2) * GROUND_WIDTH, (centerY - device->getHeight() / 2) * GROUND_WIDTH,
+                            device->getWidth() * GROUND_WIDTH, device->getHeight() * GROUND_WIDTH);
+        device->setVisible(true);
+        ui->centerSelectLabel->setVisible(false);
+        ui->centerSelectButton->setVisible(false);
+        ui->isCenterSelected = true;
+        moveMoneyFrame(true);
+    }
+    
+    money = Data::getMoney();
+    ui->moneyFrameLabel->setText(QString::number(money));
+    taskCounter = Data::getTaskCounter();
+    taskTarget = Data::getTaskTarget();
+    if (taskCounter == taskTarget) {
+        ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: green;text-align: left;"));
+        ui->taskFinishButton->setEnabled(true);
+    } else {
+        ui->collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
+        ui->taskFinishButton->setEnabled(false);
+    }
+    ui->collectCountLabel->setText(QString::number(taskCounter) + "/\n" + QString::number(taskTarget));
+    ui->cutterLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getCutterLevel()) + QString::fromUtf8("-1.png)"));
+    ui->minerLevelLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getMinerLevel()) + QString::fromUtf8("-2.png)"));
+    ui->conveyorLevelLabel1->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    ui->conveyorLevelLabel2->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    ui->conveyorLevelLabel3->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/level/level") +
+                                        QString::number(Data::getConveyorLevel()) + QString::fromUtf8("-3.png)"));
+    recoverUpgrade();
+}
+void Game::write(QJsonObject &json) const {
+    QJsonArray statusArray;
+    statusArray.append(ui->isPaused);
+    statusArray.append(ui->isCenterSelected);
+    QJsonArray mineNamesArray;
+    for (auto const & mineName : ui->mineNames) {
+        QJsonArray rowArray;
+        for (auto const & j : mineName) {
+            switch (j) {
+                case MineName::COMMON:
+                    rowArray.append("common");
+                    break;
+                case MineName::EMERALD:
+                    rowArray.append("emerald");
+                    break;
+                case MineName::DIAMOND:
+                    rowArray.append("diamond");
+                    break;
+                default:
+                    rowArray.append("common");
+                    break;
+            }
+        }
+        mineNamesArray.append(rowArray);
+    }
+    QJsonArray devicesArray;
+    for (int i = 0; i < ROW; i++) {
+        QJsonArray rowArray;
+        for (int j = 0; j < COL; j++) {
+            Device const *device = ui->devices[i][j];
+            QJsonObject deviceObject;
+            deviceObject.insert("isVisible", device->isVisible());
+            deviceObject.insert("direction", device->getDirection());
+            switch (device->getName()) {
+                case DeviceName::CENTER:
+                    deviceObject.insert("name", "center");
+                    break;
+                case DeviceName::CUTTER:
+                    deviceObject.insert("name", "cutter");
+                    break;
+                case DeviceName::DESTROYER:
+                    deviceObject.insert("name", "destroyer");
+                    break;
+                case DeviceName::MINER:
+                    deviceObject.insert("name", "miner");
+                    break;
+                case DeviceName::CONVEYOR:
+                    deviceObject.insert("name", "conveyor");
+                    break;
+                case DeviceName::CONVEYOR_CHANGE1:
+                    deviceObject.insert("name", "conveyor_change1");
+                    break;
+                case DeviceName::CONVEYOR_CHANGE2:
+                    deviceObject.insert("name", "conveyor_change2");
+                    break;
+                default:
+                    deviceObject.insert("name", "none");
+                    break;
+            }
+            rowArray.append(deviceObject);
+        }
+        devicesArray.append(rowArray);
+    }
+    json.insert("status", statusArray);
+    json.insert("mineNames", mineNamesArray);
+    json.insert("devices", devicesArray);
+}
+void Game::saveGame() const {
+    QFile file("cache/gameData.json");
+    if (file.open(QIODevice::WriteOnly)) {
+        QJsonObject dataObject;
+        write(dataObject);
+        QString jsonData = QJsonDocument(dataObject).toJson(QJsonDocument::Compact);
+        QTextStream out(&file);
+        out << jsonData;
+        file.close();
+    }
+}
+void Game::loadGame() {
+    QFile file("cache/gameData.json");
+    if (!file.open(QIODevice::ReadOnly)) {
+        initGame();
+    } else {
+        QJsonDocument doc = QJsonDocument::fromJson(file.readAll());
+        QJsonObject dataObject = doc.object();
+        file.close();
+        read(dataObject);
+    }
 }

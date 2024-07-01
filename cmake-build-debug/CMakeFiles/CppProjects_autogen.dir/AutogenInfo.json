@@ -72,7 +72,16 @@
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Widgets/Qt5Widgets_QWindowsVistaStylePlugin.cmake",
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsConfigExtras.cmake",
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Widgets/Qt5WidgetsMacros.cmake",
-		"D:/Program Files/apps/CLion/ch-0/241.14494.288/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeParseArguments.cmake"
+		"D:/Program Files/apps/CLion/ch-0/241.14494.288/bin/cmake/win/x64/share/cmake-3.28/Modules/CMakeParseArguments.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5MultimediaConfigVersion.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5MultimediaConfig.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfigVersion.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Network/Qt5NetworkConfig.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Network/Qt5Network_QGenericEnginePlugin.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5Multimedia_AudioCaptureServicePlugin.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5Multimedia_DSServicePlugin.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5Multimedia_QM3uPlaylistPlugin.cmake",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/lib/cmake/Qt5Multimedia/Qt5Multimedia_QWindowsAudioPlugin.cmake"
 	],
 	"CMAKE_SOURCE_DIR" : "D:/codes/CppProjects",
 	"DEP_FILE" : "",
@@ -83,6 +92,12 @@
 			"D:/codes/CppProjects/include/Menu.h",
 			"MU",
 			"6YEA5652QU/moc_Menu.cpp",
+			null
+		],
+		[
+			"D:/codes/CppProjects/include/Shop.h",
+			"MU",
+			"6YEA5652QU/moc_Shop.cpp",
 			null
 		],
 		[
@@ -125,7 +140,14 @@
 	"HEADER_EXTENSIONS" : [ "h", "hh", "h++", "hm", "hpp", "hxx", "in", "txx" ],
 	"INCLUDE_DIR" : "D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/include",
 	"MOC_COMPILATION_FILE" : "D:/codes/CppProjects/cmake-build-debug/CppProjects_autogen/mocs_compilation.cpp",
-	"MOC_DEFINITIONS" : [ "QT_CORE_LIB", "QT_GUI_LIB", "QT_WIDGETS_LIB" ],
+	"MOC_DEFINITIONS" : 
+	[
+		"QT_CORE_LIB",
+		"QT_GUI_LIB",
+		"QT_MULTIMEDIA_LIB",
+		"QT_NETWORK_LIB",
+		"QT_WIDGETS_LIB"
+	],
 	"MOC_DEPEND_FILTERS" : 
 	[
 		[
@@ -141,6 +163,8 @@
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtGui",
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtANGLE",
 		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtWidgets",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtMultimedia",
+		"D:/Qt/Qt5.14.2/5.14.2/mingw73_64/include/QtNetwork",
 		"D:/Program Files/apps/CLion/ch-0/241.14494.288/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++",
 		"D:/Program Files/apps/CLion/ch-0/241.14494.288/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/x86_64-w64-mingw32",
 		"D:/Program Files/apps/CLion/ch-0/241.14494.288/bin/mingw/lib/gcc/x86_64-w64-mingw32/13.1.0/include/c++/backward",
@@ -178,7 +202,8 @@
 		[ "D:/codes/CppProjects/src/game/game.cpp", "MU", null ],
 		[ "D:/codes/CppProjects/src/game/mine.cpp", "MU", null ],
 		[ "D:/codes/CppProjects/src/main.cpp", "MU", null ],
-		[ "D:/codes/CppProjects/src/menu.cpp", "MU", null ]
+		[ "D:/codes/CppProjects/src/menu.cpp", "MU", null ],
+		[ "D:/codes/CppProjects/src/shop.cpp", "MU", null ]
 	],
 	"UIC_OPTIONS" : [],
 	"UIC_SEARCH_PATHS" : [],

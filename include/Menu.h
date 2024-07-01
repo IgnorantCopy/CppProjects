@@ -6,7 +6,9 @@
 #define CPPPROJECTS_MENU_H
 
 #include <QWidget>
-#include "../include/game/Game.h"
+#include "game/Game.h"
+#include "Shop.h"
+#include "common.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -25,7 +27,8 @@ public:
     
 private:
     Ui::Menu *ui;
-    Game *game;
+    Game *game = new Game();
+    Shop *shop = new Shop();
 };
 
 

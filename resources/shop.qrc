@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="resources">
+    <file>images/home.png</file>
+    <file>images/mine/fixedShape.png</file>
+    <file>images/mine/pilesOfMine.png</file>
+    <file>images/shopButton.png</file>
+    <file>images/center.png</file>
+    <file>images/moneyFrame.png</file>
+    <file>images/shopBackground.png</file>
+  </qresource>
+</RCC>

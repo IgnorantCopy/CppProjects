@@ -1,0 +1,7 @@
+
+Ñ	cpp:S5276"‰implicit conversion turns floating-point number into integer: 'typename __gnu_cxx::__promote_2<int, int>::__type' (aka 'double') to 'int'(¾™‰ùÿÿÿÿÿ8Àù˜©†2J$b4c8ae13-cd07-42bb-8072-000e7dd9245a
+Ì	cpp:S5276"‰implicit conversion turns floating-point number into integer: 'typename __gnu_cxx::__promote_2<int, int>::__type' (aka 'double') to 'int'(±ëÆ8Àù˜©†2J$0569faea-8801-49fa-b511-591b5f4f8d78
+Ì	cpp:S5276&"‰implicit conversion turns floating-point number into integer: 'typename __gnu_cxx::__promote_2<int, int>::__type' (aka 'double') to 'int'(Ì¸Á³8Àù˜©†2J$43bc7b1a-f5f1-4638-903d-42a13c16e11c
+Œ	cpp:S5025"QReplace the use of "new" with an operation that automatically manages the memory.(Ôî‰J$b2187f34-9e9f-4ebd-af4d-9c66f206b472
+V	cpp:S50251":Rewrite the code so that you no longer need this "delete".(Áğ¯8°ÄÎ¼†2
+«	cpp:S3230"iDo not use the constructor's initializer list for data member "ui". Use the in-class initializer instead.(Ôî‰8¥¯ó…2J$c6497285-216e-4de4-b451-1bf3e02c6a85

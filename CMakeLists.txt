@@ -12,6 +12,7 @@ find_package(Qt5 COMPONENTS
         Core
         Gui
         Widgets
+        Multimedia
         REQUIRED)
 
 add_executable(CppProjects src/main.cpp
@@ -29,11 +30,15 @@ add_executable(CppProjects src/main.cpp
         include/game/device.h
         src/game/mine.cpp
         include/game/mine.h
+        src/shop.cpp
+        include/Shop.h
+        include/shop.ui
 )
 target_link_libraries(CppProjects
         Qt5::Core
         Qt5::Gui
         Qt5::Widgets
+        Qt5::Multimedia
 )
 
 if (WIN32 AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)

@@ -1,6 +1,7 @@
 <RCC>
   <qresource prefix="/resources">
     <file>images/playText.png</file>
+    <file>images/Shop.png</file>
     <file>images/play.png</file>
     <file>images/mainBackground.jpg</file>
   </qresource>

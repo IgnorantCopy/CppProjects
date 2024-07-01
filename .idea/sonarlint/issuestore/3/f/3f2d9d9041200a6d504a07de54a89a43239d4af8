@@ -1,3 +1,3 @@
 
-l	cpp:S5414"*Don't mix public and private data members.(˜şÒû8î½óë„2J$e84d2050-b265-4c58-9219-862b322e9444
-„	cpp:S5945@"=Use "std::array" or "std::vector" instead of a C-style array.(·ƒÑÍşÿÿÿÿ8–ÉÜë„2J$a967f802-5274-4bf4-9746-c5a5f8f1b0b4
+l	cpp:S5414"*Don't mix public and private data members.(˜şÒû8£¾¸ç…2J$dbcf554e-89cb-4bc4-8f83-6500f1ae1a69
+„	cpp:S5945@"=Use "std::array" or "std::vector" instead of a C-style array.(·ƒÑÍşÿÿÿÿ8–ÉÜë„2J$79a7a98b-41c4-4912-a512-1781d2c30b21

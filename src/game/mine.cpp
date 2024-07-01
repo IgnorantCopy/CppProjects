@@ -8,19 +8,19 @@ void Mine::setMineName(MineName name) {
     this->mineName = name;
     switch (name) {
         case MineName::DIAMOND:
-            value = 5;
+            value = 3 + Data::getValueLevel() * 2;
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/mine/pilesOfDiamond.png);"));
             break;
         case MineName::EMERALD:
-            value = 3;
+            value = 1 + Data::getValueLevel() * 2;
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/mine/pilesOfEmerald.png);"));
             break;
         case MineName::SINGLE_EMERALD:
-            value = 10;
+            value = 8 + Data::getValueLevel() * 2;
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/mine/singleEmerald.png);"));
             break;
         case MineName::SINGLE_DIAMOND:
-            value = 7;
+            value = 5 + Data::getValueLevel() * 2;
             setStyleSheet(QString::fromUtf8("border-image: url(resources/images/mine/singleDiamond.png);"));
             break;
         default:
@@ -30,7 +30,7 @@ void Mine::setMineName(MineName name) {
 
 void Mine::leaveMotion(int direction) {
     auto *mineAnimation = new QPropertyAnimation(this, "geometry");
-    mineAnimation->setDuration(SPEED);
+    mineAnimation->setDuration((1000 - 200 * Data::getConveyorLevel()) / 2);
     mineAnimation->setEasingCurve(QEasingCurve::Linear);
     mineAnimation->setStartValue(QRect(groundX * GROUND_WIDTH, groundY * GROUND_WIDTH, width(), height()));
     switch (direction) {
@@ -54,7 +54,7 @@ void Mine::leaveMotion(int direction) {
 
 void Mine::enterMotion(int direction) {
     auto *mineAnimation = new QPropertyAnimation(this, "geometry");
-    mineAnimation->setDuration(SPEED);
+    mineAnimation->setDuration((1000 - 200 * Data::getConveyorLevel()) / 2);
     mineAnimation->setEasingCurve(QEasingCurve::Linear);
     switch (direction) {
         case 0:

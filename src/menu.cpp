@@ -14,13 +14,23 @@ Menu::Menu(QWidget *parent) :
     ui->startButton->setAttribute(Qt::WA_Hover, true);
     ui->startButton->installEventFilter(this);
     
-    Menu::game = new Game();
+    QSound::play("resources/audio/bgm.WAV");
+    
     QPushButton::connect(ui->startButton, &QPushButton::clicked, [this]() {
         this->close();
-        Menu::game->show();
-        Menu::game->initGame();
+        game->show();
+        Config::loadGlobalData();
+        game->loadGame();
     });
     QPushButton::connect(game, &Game::backToMenu, [this]() {
+        this->show();
+    });
+    QPushButton::connect(ui->shopButton, &QPushButton::clicked, [this]() {
+        this->close();
+        shop->show();
+        shop->initShop();
+    });
+    QPushButton::connect(shop, &Shop::backToMenu, [this]() {
         this->show();
     });
 }
@@ -28,12 +38,16 @@ Menu::Menu(QWidget *parent) :
 Menu::~Menu() {
     delete ui;
     delete game;
+    delete shop;
+    game = nullptr;
+    shop = nullptr;
 }
 
 bool Menu::eventFilter(QObject *object, QEvent *event) {
     if (object == ui->startButton) {
         if (event->type() == QEvent::HoverEnter) {
             ui->startButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/playText.png);"));
+            QSound::play("resources/audio/da.WAV");
             return true;
         } else if (event->type() == QEvent::HoverLeave) {
             ui->startButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/play.png);"));

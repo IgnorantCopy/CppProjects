@@ -14,7 +14,8 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QWidget>
-#include <random>
+#include <cstdlib>
+#include <ctime>
 #include "../common.h"
 #include "Game.h"
 
@@ -86,9 +87,7 @@ public:
         }
         game->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
         
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dis(0, 40 - Data::getMineLevel() * 5);
+        srand(time(NULL));
         groundButtons = new QPushButton **[ROW];
         for (int i = 0; i < ROW; i++) {
             groundButtons[i] = new QPushButton *[COL];
@@ -96,7 +95,7 @@ public:
                 groundButtons[i][j] = new QPushButton(game);
                 groundButtons[i][j]->setGeometry(QRect(j * GROUND_WIDTH, i * GROUND_WIDTH, GROUND_WIDTH, GROUND_WIDTH));
                 groundButtons[i][j]->setObjectName(QString::fromUtf8(("groundButtons" + std::to_string(i) + std::to_string(j)).c_str()));
-                int randomNum = dis(gen);
+                int randomNum = rand() % (45 - 5 * Data::getMineLevel() + 1);
                 if (randomNum == 0) {
                     groundButtons[i][j]->setStyleSheet(
                             QString::fromUtf8("border-image: url(resources/images/diamond.png);"));
@@ -282,7 +281,7 @@ public:
         taskMineLabel->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/mine/singleEmerald.png);"));
         collectCountLabel = new QLabel(game);
         collectCountLabel->setObjectName(QString::fromUtf8("collectCountLabel"));
-        collectCountLabel->setGeometry(QRect(1830 + 350, 150, 150, 60));
+        collectCountLabel->setGeometry(QRect(1800 + 350, 140, 200, 80));
         collectCountLabel->setStyleSheet(QString::fromUtf8("color: red;text-align: left;"));
         collectCountLabel->setFont(font2);
         
@@ -409,9 +408,9 @@ public:
         deviceFrameButton->setText(QString::fromUtf8("Devices"));
         taskFrameButton->setText(QString::fromUtf8("T\na\ns\nk"));
         taskTitleLabel->setText(QString::fromUtf8("Collect\nEmerald"));
-        collectCountLabel->setText(QString::fromUtf8("0/50"));
+        collectCountLabel->setText(QString::number(Data::getTaskCounter()) + QString::fromUtf8("/\n") + QString::number(Data::getTaskTarget()));
         taskFinishButton->setText(QString::fromUtf8("Finish!"));
-        moneyFrameLabel->setText(QString::fromUtf8("0"));
+        moneyFrameLabel->setText(QString::number(Data::getMoney()));
         centerSelectLabel->setText(QString::fromUtf8("Center"));
         cutterSelectLabel->setText(QString::fromUtf8("Cutter"));
         destroyerSelectLabel->setText(QString::fromUtf8("Destroyer"));
@@ -434,12 +433,9 @@ public:
     }
     
     void initMap() {
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<int> dis(0, 40 - Data::getMineLevel() * 5);
         for (int i = 0; i < ROW; i++) {
             for (int j = 0; j < COL; j++) {
-                if (int randomNum = dis(gen); randomNum == 0) {
+                if (int randomNum = rand() % (45 - 5 * Data::getMineLevel() + 1); randomNum == 0) {
                     groundButtons[i][j]->setStyleSheet(
                             QString::fromUtf8("border-image: url(resources/images/diamond.png);"));
                     mineNames[i][j] = MineName::DIAMOND;

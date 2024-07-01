@@ -21,7 +21,7 @@ QT_END_NAMESPACE
 class Game : public QWidget {
 Q_OBJECT
 private:
-    int money = 0;
+    int money = Data::getMoney();
     int taskCounter = 0;
     int taskTarget = 50;
     Device *selectDevice = nullptr;
@@ -44,6 +44,8 @@ private:
     
     void mouseMoveEvent(QMouseEvent *event) override;
     void mouseMoveSelecting(QMouseEvent const *event);
+    
+    void closeEvent(QCloseEvent *event) override;
     
     bool eventFilter(QObject *object, QEvent *event) override;
     bool buttonPrompt(QObject const *object, QEvent const *event) const;
@@ -76,6 +78,12 @@ public:
     
     void initGame();
     void exitGame();
+    void restartGame();
+    
+    void read(QJsonObject const &json);
+    void write(QJsonObject &json) const;
+    void saveGame() const;
+    void loadGame();
 };
 
 #endif //CPPPROJECTS_GAME_H

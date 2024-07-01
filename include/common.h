@@ -5,14 +5,20 @@
 #ifndef CPPPROJECTS_COMMON_H
 #define CPPPROJECTS_COMMON_H
 
-#include <iostream>
+#include <QApplication>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QJsonValue>
+#include <QFile>
+#include <QTextStream>
+#include <QtMultimedia/QSound>
 
 #define WINDOW_HEIGHT 1500
 #define WINDOW_WIDTH 2000
 #define ROW 30
 #define COL 40
 #define GROUND_WIDTH (WINDOW_WIDTH / COL)
-#define SPEED 300
 
 class Data {
     static int money;
@@ -21,7 +27,7 @@ class Data {
     static int conveyorLevel;
     static int centerLevel;
     static int mineLevel;
-    static int valueBonus;
+    static int valueLevel;
     static int taskTarget;
     static int taskCounter;
     
@@ -32,7 +38,7 @@ public:
     static int getConveyorLevel() { return conveyorLevel; }
     static int getCenterLevel() { return centerLevel; }
     static int getMineLevel() { return mineLevel; }
-    static int getValueBonus() { return valueBonus; }
+    static int getValueLevel() { return valueLevel; }
     static int getTaskTarget() { return taskTarget; }
     static int getTaskCounter() { return taskCounter; }
     
@@ -42,9 +48,19 @@ public:
     static void setConveyorLevel(int conveyorLevel_) { Data::conveyorLevel = conveyorLevel_; }
     static void setCenterLevel(int centerLevel_) { Data::centerLevel = centerLevel_; }
     static void setMineLevel(int mineLevel_) { Data::mineLevel = mineLevel_; }
-    static void setValueBonus(int valueBonus_) { Data::valueBonus = valueBonus_; }
+    static void setValueLevel(int valueLevel_) { Data::valueLevel = valueLevel_; }
     static void setTaskTarget(int taskTarget_) { Data::taskTarget = taskTarget_; }
     static void setTaskCounter(int taskCounter_) { Data::taskCounter = taskCounter_; }
+    
+    static void read(const QJsonObject &json);
+    static void write(QJsonObject &json);
+    
+};
+
+class Config {
+public:
+    static void saveGlobalData();
+    static void loadGlobalData();
 };
 
 #endif //CPPPROJECTS_COMMON_H

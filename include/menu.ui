@@ -216,6 +216,22 @@
     </item>
    </layout>
   </widget>
+  <widget class="QPushButton" name="shopButton">
+   <property name="geometry">
+    <rect>
+     <x>1640</x>
+     <y>1190</y>
+     <width>261</width>
+     <height>271</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-image: url(:/resources/images/Shop.png);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources>
   <include location="../resources/menu.qrc"/>

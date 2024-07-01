@@ -17,7 +17,6 @@
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
-#include "common.h"
 
 QT_BEGIN_NAMESPACE
 
@@ -39,18 +38,19 @@ public:
     QSpacerItem *horizontalSpacer_2;
     QPushButton *startButton;
     QSpacerItem *horizontalSpacer_4;
+    QPushButton *shopButton;
 
     void setupUi(QWidget *Menu)
     {
         if (Menu->objectName().isEmpty())
             Menu->setObjectName(QString::fromUtf8("Menu"));
-        Menu->resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+        Menu->resize(2000, 1500);
         Menu->setAcceptDrops(false);
         Menu->setLayoutDirection(Qt::LeftToRight);
         Menu->setStyleSheet(QString::fromUtf8(""));
         background = new QLabel(Menu);
         background->setObjectName(QString::fromUtf8("background"));
-        background->setGeometry(QRect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT));
+        background->setGeometry(QRect(0, 0, 2000, 1500));
         background->setStyleSheet(QString::fromUtf8("background-image: url(resources/images/mainBackground.jpg);"));
         background->setPixmap(QPixmap(QString::fromUtf8("resources/images/mainBackground.jpg")));
         background->setScaledContents(true);
@@ -145,6 +145,10 @@ public:
 
         verticalLayout_3->addLayout(verticalLayout_2);
 
+        shopButton = new QPushButton(Menu);
+        shopButton->setObjectName(QString::fromUtf8("shopButton"));
+        shopButton->setGeometry(QRect(1640, 1190, 261, 271));
+        shopButton->setStyleSheet(QString::fromUtf8("border-image: url(resources/images/Shop.png);"));
 
         retranslateUi(Menu);
 
@@ -160,6 +164,7 @@ public:
         background->setText(QString());
         title->setText(QCoreApplication::translate("Menu", "Special Shpaed Plant", nullptr));
         startButton->setText(QString());
+        shopButton->setText(QString());
     } // retranslateUi
 
 };
