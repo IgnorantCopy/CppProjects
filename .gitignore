@@ -32,3 +32,5 @@
 *.app
 
 *.WAV
+
+cmake-build-debug/
